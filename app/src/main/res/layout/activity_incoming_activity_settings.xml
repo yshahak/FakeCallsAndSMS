@@ -1,0 +1,111 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:orientation="vertical"
+    tools:context="com.belmedia.fakecallsandsms.IncomingActivitySettings">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:text="Add picture"
+            android:id="@+id/button_add_picture"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center">
+
+            <EditText
+                android:id="@+id/editText_caller_name"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:hint="Caller name"
+                android:inputType="text"/>
+
+            <EditText
+                android:id="@+id/editText_caller_number"
+                android:layout_width="140dp"
+                android:layout_height="wrap_content"
+                android:hint="Caller number"
+                android:inputType="number"/>
+        </LinearLayout>
+
+        <Button
+            android:layout_width="110dp"
+            android:layout_height="110dp"
+            android:text="Add Voice"
+            android:id="@+id/button_add_voice"/>
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Make the call in:"
+        android:layout_margin="20dp"
+        android:textAppearance="@android:style/TextAppearance.Large"/>
+
+    <RadioGroup
+        android:id="@+id/radio_group_time_picker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center">
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="10 sec"
+            android:id="@+id/radioButton10sec" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="30 sec"
+            android:id="@+id/radioButton30sec" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="5 minutes"
+            android:id="@+id/radioButton5min" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="15 minutes"
+            android:id="@+id/radioButton15min" />
+
+        <RadioButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="custom"
+            android:id="@+id/radioButtonCustom" />
+    </RadioGroup>
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:hint="custom time"
+        android:id="@+id/editText_custom_time"
+        android:layout_gravity="center_horizontal" />
+
+    <Button
+        android:id="@+id/button_call"
+        android:layout_margin="20dp"
+        android:layout_width="110dp"
+        android:layout_height="wrap_content"
+        android:text="Call"
+        android:layout_gravity="center"
+        android:onClick="triggerCallAlarm"/>
+
+
+</LinearLayout>
