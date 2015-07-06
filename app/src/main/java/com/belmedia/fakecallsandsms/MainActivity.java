@@ -1,13 +1,13 @@
 package com.belmedia.fakecallsandsms;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -15,6 +15,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
     }
 
@@ -34,5 +35,17 @@ public class MainActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void startActivity(View view) {
+        int id = view.getId();
+        Intent intent = null;
+        switch (id){
+            case R.id.button_call:
+                intent = new Intent(this, IncomingActivitySettings.class);
+                break;
+        }
+        assert intent != null;
+        startActivity(intent);
     }
 }

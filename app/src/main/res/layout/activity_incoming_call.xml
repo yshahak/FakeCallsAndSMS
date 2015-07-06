@@ -1,12 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@android:color/black">
+
+    <LinearLayout
+        android:id="@+id/container_detail_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@color/green">
+
+        <TextView
+            android:id="@+id/text_view_incoming_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Incoming Call..."
+            android:layout_gravity="right"
+            android:textSize="20sp"
+            android:layout_marginTop="5dp"
+            android:layout_marginRight="15dp"
+            android:textColor="@android:color/white"/>
+        <TextView
+            android:layout_below="@+id/image_view_contact"
+            android:id="@+id/text_view_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Jessica Alba"
+            android:textSize="30sp"
+            android:paddingLeft="10dp"
+            android:layout_marginTop="20dp"
+            android:textColor="@android:color/white"/>
+
+        <TextView
+            android:id="@+id/text_view_number"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Mobile 909-514-5124"
+            android:paddingLeft="10dp"
+            android:textSize="20sp"
+            android:layout_marginTop="10dp"
+            android:textColor="@android:color/white"/>
+
+
+    </LinearLayout>
+
+
 
     <ImageView
+        android:id="@+id/image_view_contact"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/incoming"
-        android:onClick="stopCall"/>
+        android:layout_height="300dp"
+        android:scaleType="centerInside"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/container_detail_text"
+        android:src="@drawable/anonymous"
+        android:background="@color/contact_bkg"/>
 
-</LinearLayout>
+
+
+    <ImageView
+        android:id="@+id/image_call"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_call"
+        android:visibility="visible"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_margin="50dp"
+        android:background="@color/gray"/>
+
+    <ImageView
+        android:id="@+id/image_end"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_end_call"
+        android:visibility="visible"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_margin="50dp"
+        android:background="@color/gray"/>
+
+</RelativeLayout>
