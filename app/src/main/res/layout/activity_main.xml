@@ -18,6 +18,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Fake SMS"
+        android:onClick="startActivity"
         android:id="@+id/button_SMS"
         android:layout_below="@+id/button_call"
         android:layout_centerHorizontal="true"

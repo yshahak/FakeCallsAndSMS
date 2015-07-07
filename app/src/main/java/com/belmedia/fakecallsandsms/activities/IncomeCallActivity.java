@@ -1,10 +1,15 @@
-package com.belmedia.fakecallsandsms;
+package com.belmedia.fakecallsandsms.activities;
 
+import android.content.Context;
+import android.database.Cursor;
+import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
+import android.support.v4.content.CursorLoader;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -14,7 +19,11 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.belmedia.fakecallsandsms.R;
+import com.belmedia.fakecallsandsms.Utils;
 import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -28,8 +37,11 @@ public class IncomeCallActivity extends AppCompatActivity{
     @Bind(R.id.image_call) ImageView imageCall;
     @Bind(R.id.image_end) ImageView imageEnd;
     @Bind(R.id.text_view_incoming_call) TextView textIncomeCall;
+    @Bind(R.id.text_view_name) TextView textViewContactName;
+    @Bind(R.id.text_view_number) TextView textViewContactNumber;
 
-    public static final String EXTRA_IMAGE_URI = "imageUri";
+
+
     final int contactDPsize = 300, imageBtnMargin = 50;
     int screenWidth;
     MediaPlayer mp;
@@ -43,7 +55,7 @@ public class IncomeCallActivity extends AppCompatActivity{
         imageCall.setOnTouchListener(iconListener);
         imageEnd.setOnTouchListener(iconListener);
 
-        Uri imageUri = getIntent().getParcelableExtra(EXTRA_IMAGE_URI);
+        Uri imageUri = getIntent().getParcelableExtra(FakeCall.KEY_IMAGE_URI);
         screenWidth =  getWindowManager().getDefaultDisplay().getWidth();
         if (imageUri != null){
             int height = Utils.getDpInPixels(contactDPsize, this);
@@ -53,6 +65,14 @@ public class IncomeCallActivity extends AppCompatActivity{
                     .centerCrop()
                     .into(imageContact);
         }
+
+        String contactName = getIntent().getStringExtra(FakeCall.KEY_CONTACT_NAME);
+        if (contactName != null)
+            textViewContactName.setText(contactName);
+
+        String contactNumber = getIntent().getStringExtra(FakeCall.KEY_CONTACT_NUMBER);
+        if (contactNumber != null)
+            textViewContactNumber.setText(contactNumber);
         mp = MediaPlayer.create(this, Settings.System.DEFAULT_RINGTONE_URI);
         mp.setLooping(true);
         mp.start();
@@ -65,14 +85,31 @@ public class IncomeCallActivity extends AppCompatActivity{
             mp.stop();
             textIncomeCall.post(updateTimeOfCall);
         }
+        Uri musicUri = getIntent().getParcelableExtra(FakeCall.KEY_MUSIC_URI);
+        if (musicUri != null){
+            String pathFromUri = getRealPathFromURI(this, musicUri);
+            mp = new MediaPlayer();
+            try {
+                mp.setDataSource(this, Uri.parse(pathFromUri));
+                mp.prepare();
+                AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                audio.setStreamVolume(AudioManager.STREAM_MUSIC, 4, AudioManager.FLAG_ALLOW_RINGER_MODES);
+                mp.setLooping(true);
+                mp.start();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
         Log.d("TAG", "once");
     }
+
 
     public void endCall() {
         mp.stop();
         containerContactTexts.setBackgroundColor(getResources().getColor(R.color.red));
         textIncomeCall.setText(getString(R.string.end_call));
-        textIncomeCall.postDelayed(finish, 2000);
+        textIncomeCall.postDelayed(finish, 1300);
+        textIncomeCall.removeCallbacks(updateTimeOfCall);
     }
 
     private Runnable updateTimeOfCall = new Runnable() {
@@ -107,10 +144,10 @@ public class IncomeCallActivity extends AppCompatActivity{
                         v.getLocationOnScreen(position);
                         endIconInitialPosition = position[0] +  iconWidth;
                     }
-                    defaultMargin = Utils.getDpInPixels(imageBtnMargin, v.getContext());
                     params = (RelativeLayout.LayoutParams) v.getLayoutParams();
                     if (iconWidth == 0) {
                         iconWidth = v.getWidth();
+                        defaultMargin = Utils.getDpInPixels(imageBtnMargin, v.getContext());
                     }
                     break;
                 case MotionEvent.ACTION_MOVE:
@@ -149,10 +186,22 @@ public class IncomeCallActivity extends AppCompatActivity{
         }
 
         private void finalizeGesture(@NonNull View icon) {
-            params.leftMargin = defaultMargin;
+            if (icon.equals(imageCall))
+                params.leftMargin = defaultMargin;
+            else
+                params.rightMargin = defaultMargin;
             icon.setLayoutParams(params);
         }
 
+    }
+
+    private String getRealPathFromURI(Context context, Uri contentUri) {
+        String[] projection = { MediaStore.Audio.Media.DATA };
+        CursorLoader loader = new CursorLoader(context, contentUri, projection, null, null, null);
+        Cursor cursor = loader.loadInBackground();
+        int songPath_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
+        cursor.moveToFirst();
+        return cursor.getString(songPath_index);
     }
 
 
