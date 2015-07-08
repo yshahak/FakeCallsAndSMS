@@ -7,14 +7,18 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.provider.Telephony;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.app.NotificationCompat;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +31,8 @@ import com.belmedia.fakecallsandsms.R;
 import com.belmedia.fakecallsandsms.ToggleButtonGroupTableLayout;
 import com.belmedia.fakecallsandsms.Utils;
 
+import java.io.IOException;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -37,11 +43,11 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
     final int  btnDp = 130;
 
     public static final String KEY_CONTACT_NAME = "contactNameSMS", KEY_CONTACT_NUMBER = "contactNumberSMS"
-            , KEY_CUSTOM = "extraCustomSMS", KEY_BODY_SMS = "bodySms";
+            , KEY_CUSTOM = "extraCustomSMS", KEY_BODY_SMS = "bodySms", KEY_CONTACT_THUMBNAIL = "contactThumbnail";
 
     @Bind(R.id.button_call)
     Button btnCall;
-    @Bind(R.id.button_add_picture) TextView btnAddPic;
+    @Bind(R.id.button_add_picture) TextView btnAddContact;
 
 
     @Bind(R.id.editText_caller_name)  EditText editTextCallerName;
@@ -59,27 +65,50 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fake_sms);
         ButterKnife.bind(this);
-        btnAddPic.setOnClickListener(this);
+        btnAddContact.setOnClickListener(this);
         contactData = new ContactData();
 
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         contactData.name = pref.getString(KEY_CONTACT_NAME, "");
-        contactData.number = pref.getLong(KEY_CONTACT_NUMBER, -1);
+        contactData.number = pref.getString(KEY_CONTACT_NUMBER, "");
+        contactData.thumbnailUri = pref.getString(KEY_CONTACT_THUMBNAIL, "");
+        if (!contactData.thumbnailUri.equals(""))
+            Utils.loadImageFromUri(this, btnDp, Uri.parse(contactData.thumbnailUri), btnAddContact, TAG);
         editTextCallerName.setText(contactData.name);
-        if (contactData.number != -1)
-            editTextCallerNumber.setText(Long.toString(contactData.number));
+        if (!contactData.number.equals(""))
+            editTextCallerNumber.setText(contactData.number);
         editTextCustomTime.setText(pref.getString(KEY_CUSTOM, ""));
         editTextBodySms.setText(pref.getString(KEY_BODY_SMS, ""));
+        editTextCustomTime.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                findViewById(R.id.radioButtonCustom).performClick();
+            }
+        });
 
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.edit().putString(KEY_CONTACT_NAME, contactData.name)
-                .putLong(KEY_CONTACT_NUMBER, contactData.number)
+                .putString(KEY_CONTACT_NUMBER, contactData.number)
+                .putString(KEY_CONTACT_THUMBNAIL, contactData.thumbnailUri)
                 .putString(KEY_CUSTOM, editTextCustomTime.getText().toString())
                 .putString(KEY_BODY_SMS, editTextBodySms.getText().toString())
                 .commit();
@@ -91,7 +120,7 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
         values.put("body", editTextBodySms.getText().toString());
         getContentResolver().insert(Uri.parse("content://sms/inbox"), values);
         getContentResolver().notifyChange(Uri.parse("content://sms/inbox"), null);
-        buildSmsNotification(Long.toString(contactData.number), editTextBodySms.getText().toString());
+        buildSmsNotification(contactData.number, editTextBodySms.getText().toString());
     }
 
     private void buildSmsNotification(String title, String message){
@@ -109,14 +138,30 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
             launchIntent = new Intent(Intent.ACTION_MAIN);
             launchIntent.setType(SMS_MIME_TYPE);
         }
-
+        Bitmap bitmap = null;
+        if (!contactData.thumbnailUri.equals("") )
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.parse(contactData.thumbnailUri));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-        mBuilder.setContentTitle(title)
-                .setContentText(message)
-                .setAutoCancel(true)
-                .setSmallIcon(android.R.drawable.stat_notify_chat)
-                .setPriority(Notification.PRIORITY_HIGH)
-                .setSound(uriSound);
+        if (bitmap != null) {
+            mBuilder.setContentTitle(title)
+                    .setContentText(message)
+                    .setAutoCancel(true)
+                    .setLargeIcon(bitmap)
+                    .setSmallIcon(android.R.drawable.stat_notify_chat)
+                    .setPriority(Notification.PRIORITY_HIGH)
+                    .setSound(uriSound);
+        } else {
+            mBuilder.setContentTitle(title)
+                    .setContentText(message)
+                    .setAutoCancel(true)
+                    .setSmallIcon(android.R.drawable.stat_notify_chat)
+                    .setPriority(Notification.PRIORITY_HIGH)
+                    .setSound(uriSound);
+        }
         PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, launchIntent, 0);
         mBuilder.setContentIntent(resultPendingIntent);
         ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(1, mBuilder.build());
@@ -154,9 +199,20 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
                 case SELECT_CONTACT:
                     Uri selectedContactUri = data.getData();
                     if (selectedContactUri != null) {
-                        Utils.loadContactFromUri(contactData , getBaseContext(),  selectedContactUri);
+                        Bundle bundle = Utils.loadContactFromUri(getBaseContext(),  selectedContactUri);
+                        contactData.number = bundle.getString(Utils.KEY_NUMBER);
+                        contactData.name = bundle.getString(Utils.KEY_NAME);
+                        contactData.thumbnailUri = bundle.getString(Utils.KEY_THUMBNAIL);
                         editTextCallerName.setText(contactData.name);
-                        editTextCallerNumber.setText(Long.toString(contactData.number));
+                        editTextCallerNumber.setText(contactData.number);
+                        if (contactData.thumbnailUri != null && !contactData.thumbnailUri.equals(""))
+                            Utils.loadImageFromUri(getBaseContext(), btnDp, Uri.parse(contactData.thumbnailUri), btnAddContact, TAG);
+                        else {
+                            btnAddContact.setText("pick\\ncontact");
+                            btnAddContact.setBackgroundDrawable(null);
+                            btnAddContact.setBackgroundColor(getResources().getColor(R.color.gray));
+
+                        }
                     }
                     break;
             }
@@ -174,7 +230,7 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
             public void run() {
                 sendSms();
             }
-        }, 5000);
+        }, timeForTrigger);
 
         //show home screen
         Intent startMain = new Intent(Intent.ACTION_MAIN);
@@ -185,6 +241,7 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
 
     public class ContactData {
         public String name;
-        public long number;
+        public String number;
+        public String thumbnailUri;
     }
 }

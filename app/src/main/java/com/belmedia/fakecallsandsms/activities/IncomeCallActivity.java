@@ -31,7 +31,7 @@ import butterknife.ButterKnife;
 /**
  * Created by B.E.L on 05/07/2015.
  */
-public class IncomeCallActivity extends AppCompatActivity{
+public class IncomeCallActivity extends AppCompatActivity implements View.OnClickListener {
     @Bind(R.id.image_view_contact) ImageView imageContact;
     @Bind(R.id.container_detail_text) LinearLayout containerContactTexts;
     @Bind(R.id.image_call) ImageView imageCall;
@@ -85,6 +85,15 @@ public class IncomeCallActivity extends AppCompatActivity{
             mp.stop();
             textIncomeCall.post(updateTimeOfCall);
         }
+
+        imageCall.setVisibility(View.GONE);
+        RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageEnd.getLayoutParams();
+        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        params.rightMargin = screenWidth /2 - imageEnd.getWidth() / 2;
+        imageEnd.setLayoutParams(params);
+        imageEnd.setOnTouchListener(null);
+        imageEnd.setOnClickListener(this);
+
         Uri musicUri = getIntent().getParcelableExtra(FakeCall.KEY_MUSIC_URI);
         if (musicUri != null){
             String pathFromUri = getRealPathFromURI(this, musicUri);
@@ -99,6 +108,7 @@ public class IncomeCallActivity extends AppCompatActivity{
             } catch (IOException e) {
                 e.printStackTrace();
             }
+
         }
         Log.d("TAG", "once");
     }
@@ -129,6 +139,10 @@ public class IncomeCallActivity extends AppCompatActivity{
         }
     };
 
+    @Override
+    public void onClick(View v) {
+        endCall();
+    }
 
 
     class IconListener implements View.OnTouchListener{

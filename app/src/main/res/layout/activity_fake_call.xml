@@ -7,14 +7,23 @@
     android:orientation="vertical"
     tools:context="com.belmedia.fakecallsandsms.activities.FakeCall">
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Add from Contacts"
+        android:padding="10dp"
+        android:onClick="pickFromContact"
+        android:background="@color/gray"/>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_gravity="center">
 
-
         <TextView
+            android:layout_gravity="center"
             android:gravity="center"
             android:layout_width="130dp"
             android:layout_height="130dp"
@@ -23,37 +32,37 @@
             android:id="@+id/button_add_picture"
             android:background="@color/gray"/>
 
+
         <TextView
+            android:layout_gravity="center"
             android:layout_width="130dp"
             android:layout_height="130dp"
             android:gravity="center"
-            android:text="Add \nVoice"
+            android:text="Add \nFake\nConversation\nTrack"
             android:id="@+id/button_add_voice"
             android:background="@color/gray"
             android:layout_margin="5dp"/>
     </LinearLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_gravity="center">
 
         <EditText
             android:id="@+id/editText_caller_name"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Caller name"
-            android:inputType="text"
-            android:cursorVisible="false"/>
+            android:inputType="text"/>
 
         <EditText
             android:id="@+id/editText_caller_number"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Caller number"
-            android:inputType="numberDecimal"
-            android:cursorVisible="false"/>
+            android:inputType="numberDecimal"/>
     </LinearLayout>
 
     <TextView

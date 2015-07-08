@@ -12,14 +12,16 @@ import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
+import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.belmedia.fakecallsandsms.activities.FakeSMS;
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
@@ -32,6 +34,7 @@ import java.io.InputStream;
 public class Utils {
 
     final static int SecFactor = 1000, MinFactor = 1000*60;
+    public final static String KEY_NAME = "name", KEY_NUMBER = "number", KEY_THUMBNAIL = "thumbnail";
 
     public static Bitmap getBitmapFromUri(Uri selectedImageUri, Context context, int width, int height){
         Bitmap bm = null;
@@ -54,7 +57,7 @@ public class Utils {
         return bm;
     }
 
-    public static Bitmap getBitmapFromBitmp(Bitmap bm, int newWidth, int newHeight){
+    public static Bitmap getBitmapFromBitmap(Bitmap bm, int newWidth, int newHeight){
         int width = bm.getWidth();
         int height = bm.getHeight();
         float scaleWidth = ((float) newWidth) / width;
@@ -131,7 +134,7 @@ public class Utils {
         return finalTimerString;
     }
 
-    public static void loadImageFromUri(final Context context, int btnDp, Uri selectedImageUri, final TextView btn, final String TAG) {
+    public static void loadImageFromUri(final Context context, int btnDp,@NonNull final Uri selectedImageUri, final TextView btn, final String TAG) {
         Target loadTarget = new Target() {
             @Override
             public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -142,6 +145,13 @@ public class Utils {
 
             @Override
             public void onBitmapFailed(Drawable errorDrawable) {
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), selectedImageUri);
+                    BitmapDrawable bitmapDrawable = new BitmapDrawable(bitmap);
+                    btn.setBackgroundDrawable(bitmapDrawable);
+                } catch (IOException|SecurityException e) {
+                    e.printStackTrace();
+                }
                 Log.d(TAG, "failed");
             }
 
@@ -213,7 +223,7 @@ public class Utils {
                     else
                         timeForTrigger = value * MinFactor;
                 }
-
+                break;
             default:
                 timeForTrigger = 10 * SecFactor;
         }
@@ -227,10 +237,12 @@ public class Utils {
 
     }
 
-    public static void loadContactFromUri(FakeSMS.ContactData data,@NonNull Context context, Uri selectedContactUri) {
+    public static Bundle loadContactFromUri(@NonNull Context context, Uri selectedContactUri) {
         // Get the URI that points to the selected contact
         // We only need the NUMBER column, because there will be only one row in the result
-        String[] projection = {ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME};
+        Bundle bundle = new Bundle();
+        String[] projection = {ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                ContactsContract.CommonDataKinds.Phone.PHOTO_URI};
 
         // Perform the query on the contact to get the NUMBER column
         // We don't need a selection or sort order (there's only one result for the given URI)
@@ -244,11 +256,18 @@ public class Utils {
         // Retrieve the phone number from the NUMBER column
         int columnNumber = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
         String number = cursor.getString(columnNumber);
-        number = number.replaceAll("[^0-9]+", "");
-        data.number = Long.valueOf(number);
+        //number = number.replaceAll("[^0-9]+", "");
+        number = number.replaceAll("\\D+", "");
+
+        bundle.putString(KEY_NUMBER, number);
         int columnName = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-        data.name = cursor.getString(columnName);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            int columnThumbnailUri = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI);
+            bundle.putString(KEY_THUMBNAIL, cursor.getString(columnThumbnailUri));
+        }
+        bundle.putString(KEY_NAME, cursor.getString(columnName));
         cursor.close();
+        return bundle;
     }
 
 

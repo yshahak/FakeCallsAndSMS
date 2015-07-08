@@ -33,16 +33,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Caller name"
-                android:inputType="text"
-                android:cursorVisible="false"/>
+                android:inputType="text"/>
 
             <EditText
                 android:id="@+id/editText_caller_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:hint="Caller number"
-                android:inputType="numberDecimal"
-                android:cursorVisible="false"/>
+                android:inputType="numberDecimal"/>
         </LinearLayout>
 
 
@@ -56,8 +54,7 @@
         android:lines="3"
         android:minLines="2"
         android:maxLines="10"
-        android:scrollbars="vertical"
-        android:cursorVisible="false"/>
+        android:scrollbars="vertical"/>
 
 
     <TextView

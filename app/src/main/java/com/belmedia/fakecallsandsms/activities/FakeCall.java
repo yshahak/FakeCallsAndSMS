@@ -15,6 +15,8 @@ import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -38,7 +40,7 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
     private final String TAG = getClass().getSimpleName();
     final int  btnDp = 130;
 
-    private static final int SELECT_PICTURE = 1,  CROP_PIC_REQUEST_CODE = 2, SELECT_MUSIC = 3, SELECT_RECORD_SOUND = 4;
+    private static final int SELECT_PICTURE = 1,  CROP_PIC_REQUEST_CODE = 2, SELECT_MUSIC = 3, SELECT_RECORD_SOUND = 4, SELECT_CONTACT = 5;
     public static final String KEY_IMAGE_URI = "imageUriCall", KEY_MUSIC_URI = "musicUriCall"
             ,KEY_CONTACT_NAME = "contactNameCall", KEY_CONTACT_NUMBER = "contactNumberCall", KEY_CUSTOM = "extraCustomCall";
     Uri selectedImageUri, selectedMusicUri;
@@ -68,7 +70,6 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
         editTextCallerName.setText(pref.getString(KEY_CONTACT_NAME, ""));
         editTextCallerNumber.setText(pref.getString(KEY_CONTACT_NUMBER, ""));
         editTextCustomTime.setText(pref.getString(KEY_CUSTOM, ""));
-
         String savedImageUri = pref.getString(KEY_IMAGE_URI, "");
         if (!"".equals(savedImageUri)) {
             selectedImageUri = Uri.parse(savedImageUri);
@@ -79,20 +80,43 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
             selectedMusicUri = Uri.parse(savedMusicUri);
             loadMusicFromUri();
         }
+        editTextCustomTime.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                findViewById(R.id.radioButtonCustom).performClick();
+            }
+        });
+
 
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
+        String imageUri = "";
+        if (selectedImageUri != null)
+            imageUri = selectedImageUri.toString();
+        String musicUri = "";
+        if (selectedMusicUri != null)
+            musicUri = selectedMusicUri.toString();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.edit().putString(KEY_CONTACT_NAME, editTextCallerName.getText().toString())
                 .putString(KEY_CONTACT_NUMBER, editTextCallerNumber.getText().toString())
                 .putString(KEY_CUSTOM,editTextCustomTime.getText().toString())
-                .putString(KEY_IMAGE_URI, selectedImageUri.toString())
-                .putString(KEY_MUSIC_URI, selectedMusicUri.toString())
+                .putString(KEY_IMAGE_URI, imageUri)
+                .putString(KEY_MUSIC_URI, musicUri)
                 .commit();
     }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -123,7 +147,7 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
                 case SELECT_PICTURE:
                     selectedImageUri = data.getData();
                     if (selectedImageUri != null) {
-                        Utils.loadImageFromUri(getParent(), btnDp, selectedImageUri, btnAddPic, TAG);
+                        Utils.loadImageFromUri(getBaseContext(), btnDp, selectedImageUri, btnAddPic, TAG);
                     } else
                         System.out.println("selectedImagePath is null");
                     break;
@@ -141,8 +165,27 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
                     String titleRecord = "My Record";
                     btnAddVoice.setText(titleRecord);
                     break;
-                }
 
+                case SELECT_CONTACT:
+                    Uri selectedContactUri = data.getData();
+                    if (selectedContactUri != null) {
+                        Bundle bundle = Utils.loadContactFromUri(getBaseContext(), selectedContactUri);
+                        editTextCallerName.setText(bundle.getString(Utils.KEY_NAME));
+                        editTextCallerNumber.setText(bundle.getString(Utils.KEY_NUMBER));
+                        String thumbnail = bundle.getString(Utils.KEY_THUMBNAIL);
+                        if (thumbnail != null) {
+                            selectedImageUri = Uri.parse(thumbnail);
+                            Utils.loadImageFromUri(getBaseContext(), btnDp, selectedImageUri, btnAddPic, TAG);
+                        } else {
+                            selectedImageUri = null;
+                            btnAddPic.setText("Add\npicture");
+                            btnAddPic.setBackgroundDrawable(null);
+                            btnAddPic.setBackgroundColor(getResources().getColor(R.color.gray));
+                        }
+                    }
+                    break;
+
+            }
         }
     }
 
@@ -174,7 +217,7 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
 
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,  incomeCallActivity, 0);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + 1500, pendingIntent);
+        alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeForTrigger, pendingIntent);
 
         //show the home screen
         Intent startMain = new Intent(Intent.ACTION_MAIN);
@@ -202,7 +245,7 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
                                     startActivityForResult(intent, SELECT_RECORD_SOUND);
                                 } catch (ActivityNotFoundException e) {
                                     ExceptionHandler.handleException(e);
-                                    Toast.makeText(getParent(), "Your device miss built in recorder", Toast.LENGTH_LONG).show();
+                                    Toast.makeText(getBaseContext(), "Your device miss built in recorder", Toast.LENGTH_LONG).show();
                                 }
                             }
                         }
@@ -234,6 +277,11 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
             Utils.pickImage(this, SELECT_PICTURE);
         else if (v.equals(btnAddVoice))
             startVoiceDialog();
+    }
+
+
+    public void pickFromContact(View view) {
+        Utils.pickContact(this, SELECT_CONTACT);
     }
 
 
