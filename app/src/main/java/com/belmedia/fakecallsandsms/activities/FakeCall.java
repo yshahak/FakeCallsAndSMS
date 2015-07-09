@@ -12,6 +12,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract;
 import android.provider.MediaStore;
 import android.support.v4.content.CursorLoader;
 import android.support.v7.app.AppCompatActivity;
@@ -21,8 +22,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -38,16 +39,16 @@ import butterknife.ButterKnife;
 public class FakeCall extends AppCompatActivity  implements View.OnClickListener{
 
     private final String TAG = getClass().getSimpleName();
-    final int  btnDp = 130;
+    final int  btnDpWidth = 120, btnDpwHeight = 140;
 
-    private static final int SELECT_PICTURE = 1,  CROP_PIC_REQUEST_CODE = 2, SELECT_MUSIC = 3, SELECT_RECORD_SOUND = 4, SELECT_CONTACT = 5;
+    private static final int SELECT_PICTURE = 1,  CROP_PIC_REQUEST_CODE = 2,
+            SELECT_MUSIC = 3, SELECT_RECORD_SOUND = 4, SELECT_CONTACT = 5, SELECT_CELEB = 6;
     public static final String KEY_IMAGE_URI = "imageUriCall", KEY_MUSIC_URI = "musicUriCall"
             ,KEY_CONTACT_NAME = "contactNameCall", KEY_CONTACT_NUMBER = "contactNumberCall", KEY_CUSTOM = "extraCustomCall";
     Uri selectedImageUri, selectedMusicUri;
     //ADDED
 
-    @Bind(R.id.button_call) Button btnCall;
-    @Bind(R.id.button_add_picture) TextView btnAddPic;
+    @Bind(R.id.contact_picture) ImageView btnAddPic;
     @Bind(R.id.button_add_voice) TextView btnAddVoice;
 
 
@@ -64,8 +65,12 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fake_call);
         ButterKnife.bind(this);
+
         btnAddVoice.setOnClickListener(this);
         btnAddPic.setOnClickListener(this);
+        findViewById(R.id.button_add_celeb).setOnClickListener(this);
+        findViewById(R.id.button_add_contact).setOnClickListener(this);
+
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         editTextCallerName.setText(pref.getString(KEY_CONTACT_NAME, ""));
         editTextCallerNumber.setText(pref.getString(KEY_CONTACT_NUMBER, ""));
@@ -73,7 +78,7 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
         String savedImageUri = pref.getString(KEY_IMAGE_URI, "");
         if (!"".equals(savedImageUri)) {
             selectedImageUri = Uri.parse(savedImageUri);
-            Utils.loadImageFromUri(this, btnDp, selectedImageUri, btnAddPic, TAG);
+            Utils.loadImageFromUri(this, btnDpWidth, btnDpwHeight, selectedImageUri, btnAddPic);
         }
         String savedMusicUri = pref.getString(KEY_MUSIC_URI, "");
         if (!"".equals(savedMusicUri)) {
@@ -147,7 +152,7 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
                 case SELECT_PICTURE:
                     selectedImageUri = data.getData();
                     if (selectedImageUri != null) {
-                        Utils.loadImageFromUri(getBaseContext(), btnDp, selectedImageUri, btnAddPic, TAG);
+                        Utils.loadImageFromUri(getBaseContext(), btnDpWidth, btnDpwHeight, selectedImageUri, btnAddPic);
                     } else
                         System.out.println("selectedImagePath is null");
                     break;
@@ -175,13 +180,32 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
                         String thumbnail = bundle.getString(Utils.KEY_THUMBNAIL);
                         if (thumbnail != null) {
                             selectedImageUri = Uri.parse(thumbnail);
-                            Utils.loadImageFromUri(getBaseContext(), btnDp, selectedImageUri, btnAddPic, TAG);
+                            Utils.loadImageFromUri(getBaseContext(), btnDpWidth, btnDpwHeight, selectedImageUri, btnAddPic);
                         } else {
                             selectedImageUri = null;
-                            btnAddPic.setText("Add\npicture");
                             btnAddPic.setBackgroundDrawable(null);
                             btnAddPic.setBackgroundColor(getResources().getColor(R.color.gray));
                         }
+                    }
+                    break;
+                case SELECT_CELEB:
+                    int drawAble_id = data.getIntExtra(PickCelebActivity.KEY_CELEB_RESULT, R.drawable.celeb_obama);
+                    String packageName = getPackageName();
+                    selectedImageUri = Uri.parse("android.resource://" + packageName +"/" + drawAble_id);
+                    Utils.loadImageFromUri(getBaseContext(), btnDpWidth, btnDpwHeight, selectedImageUri, btnAddPic);
+                    switch (drawAble_id){
+                        case R.drawable.celeb_obama:
+                            editTextCallerName.setText("Barack Obama");
+                            editTextCallerNumber.setText("058-699669");
+                            break;
+                        case R.drawable.celeb_golda:
+                            editTextCallerName.setText("גולדה מאיר");
+                            editTextCallerNumber.setText("052-296569");
+                            break;
+                        case R.drawable.celeb_hawking:
+                            editTextCallerName.setText("Stephen Hawking");
+                            editTextCallerNumber.setText("050-934015");
+                            break;
                     }
                     break;
 
@@ -277,12 +301,24 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
             Utils.pickImage(this, SELECT_PICTURE);
         else if (v.equals(btnAddVoice))
             startVoiceDialog();
+        else if (v.getId() == R.id.button_add_celeb)
+            pickFromCeleb();
+        else if (v.getId() == R.id.button_add_contact)
+            pickFromContact();
+
     }
 
 
-    public void pickFromContact(View view) {
-        Utils.pickContact(this, SELECT_CONTACT);
+    public void pickFromContact() {
+        Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
+        pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE); // Show user only contacts w/ phone numbers
+        startActivityForResult(pickContactIntent, SELECT_CONTACT);
+
     }
 
 
+    public void pickFromCeleb() {
+        Intent pickContactIntent = new Intent(this, PickCelebActivity.class);
+        startActivityForResult(pickContactIntent, SELECT_CELEB);
+    }
 }

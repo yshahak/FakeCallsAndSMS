@@ -1,76 +1,116 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:orientation="vertical"
+    android:padding="5dp"
     tools:context="com.belmedia.fakecallsandsms.activities.FakeCall">
 
-    <Button
+
+    <LinearLayout
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="10dp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:text="Add from Contacts"
-        android:padding="10dp"
-        android:onClick="pickFromContact"
-        android:background="@color/gray"/>
+        android:orientation="horizontal">
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_gravity="center">
 
         <TextView
+            android:id="@+id/button_add_celeb"
+            android:layout_width="@dimen/pick_slot_height"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:gravity="center"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
             android:layout_margin="5dp"
-            android:text="Add\npicture"
-            android:id="@+id/button_add_picture"
-            android:background="@color/gray"/>
+            android:padding="8dp"
+
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            android:background="@color/gray"
+            android:gravity="center"
+            android:text="Pick Celeb" />
 
 
         <TextView
+            android:id="@+id/button_add_contact"
+            android:layout_width="@dimen/pick_slot_height"
+            android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_width="130dp"
-            android:layout_height="130dp"
-            android:gravity="center"
-            android:text="Add \nFake\nConversation\nTrack"
-            android:id="@+id/button_add_voice"
+            android:layout_margin="5dp"
+            android:padding="8dp"
             android:background="@color/gray"
-            android:layout_margin="5dp"/>
+            android:gravity="center"
+            android:text="Pick Contact"
+            android:textAppearance="@android:style/TextAppearance.Medium"  />
+
+
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:layout_gravity="center">
+        android:layout_gravity="center"
+        android:orientation="horizontal">
+
+     <!--   <ImageView
+            android:id="@+id/button_add_picture"
+            android:layout_width="@dimen/image_view_slot_dimen"
+            android:layout_height="@dimen/image_view_slot_dimen"
+            android:layout_gravity="center"
+            android:layout_margin="5dp"
+            android:src="@drawable/anonymous"
+            android:background="@color/gray"
+
+            android:gravity="center" />-->
+
+        <TextView
+            android:id="@+id/button_add_voice"
+            android:layout_width="wrap_content"
+            android:layout_height="80dp"
+            android:layout_gravity="center"
+            android:background="@color/gray"
+            android:gravity="center"
+            android:padding="5dp"
+            android:layout_marginBottom="10dp"
+            android:text="Add fake\n conversation track"
+            android:textAppearance="@android:style/TextAppearance.Medium"  />
+
+
+    </LinearLayout>
+
+    <include layout="@layout/contact_cell"    />
+
+
+   <!-- <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="horizontal"
+        android:layout_marginTop="5dp"
+        >
 
         <EditText
             android:id="@+id/editText_caller_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Caller name"
-            android:inputType="text"/>
+            android:layout_marginRight="5dp"
+            android:inputType="text" />
 
         <EditText
             android:id="@+id/editText_caller_number"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:hint="Caller number"
-            android:inputType="numberDecimal"/>
-    </LinearLayout>
+            android:layout_marginLeft="5dp"
+            android:inputType="numberDecimal" />
+    </LinearLayout>-->
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_margin="5dp"
         android:text="Make the call in:"
-        android:layout_margin="20dp"
-        android:textAppearance="@android:style/TextAppearance.Large"/>
+        android:textAppearance="@android:style/TextAppearance.Medium" />
 
     <com.belmedia.fakecallsandsms.ToggleButtonGroupTableLayout
         android:id="@+id/radio_group_time_picker"
@@ -81,87 +121,82 @@
         <TableRow>
 
             <RadioButton
+                android:id="@+id/radioButton10sec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:checked="true"
-                android:text="10 sec"
-                android:id="@+id/radioButton10sec" />
+                android:text="10 sec" />
 
             <RadioButton
+                android:id="@+id/radioButton30sec"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="30 sec"
-                android:id="@+id/radioButton30sec" />
+                android:text="30 sec" />
 
             <RadioButton
+                android:id="@+id/radioButton5min"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="5 minutes"
-                android:id="@+id/radioButton5min" />
+                android:text="5 minutes" />
         </TableRow>
 
         <TableRow>
 
             <RadioButton
+                android:id="@+id/radioButton15min"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="15 minutes"
-                android:id="@+id/radioButton15min" />
+                android:text="15 minutes" />
 
             <RadioButton
+                android:id="@+id/radioButtonCustom"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="custom"
-                android:id="@+id/radioButtonCustom" />
+                android:text="custom" />
         </TableRow>
 
     </com.belmedia.fakecallsandsms.ToggleButtonGroupTableLayout>
 
 
-
-
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_gravity="center_horizontal"
         android:layout_marginTop="10dp"
-        android:layout_gravity="center_horizontal">
+        android:orientation="horizontal">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Custom:"
-            android:textAppearance="@android:style/TextAppearance.Large"/>
+            android:textAppearance="@android:style/TextAppearance.Large" />
 
         <EditText
+            android:id="@+id/editText_custom_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="number"
             android:hint=" 20 "
-            android:id="@+id/editText_custom_time" />
+            android:inputType="number" />
 
         <Spinner
             android:id="@+id/spinner_custom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:entries="@array/spinner_choices"
             android:layout_marginLeft="10dp"
-            android:cursorVisible="false"/>
-
-
+            android:cursorVisible="false"
+            android:entries="@array/spinner_choices" />
 
 
     </LinearLayout>
 
     <Button
         android:id="@+id/button_call"
-        android:layout_margin="20dp"
         android:layout_width="110dp"
         android:layout_height="wrap_content"
-        android:text="Call"
         android:layout_gravity="center"
-        android:onClick="triggerCallAlarm"/>
-
+        android:layout_margin="5dp"
+        android:onClick="triggerCallAlarm"
+        android:text="Call" />
 
 
 </LinearLayout>

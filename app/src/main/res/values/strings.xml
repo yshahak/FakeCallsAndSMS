@@ -11,4 +11,5 @@
         <item>Minutes</item>
     </string-array>
     <string name="title_activity_fake_sms">FakeSMS</string>
+    <string name="title_activity_pick_celeb">PickCelebActivity</string>
 </resources>

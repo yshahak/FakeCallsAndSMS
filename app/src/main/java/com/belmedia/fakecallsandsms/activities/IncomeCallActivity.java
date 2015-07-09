@@ -51,6 +51,9 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_incoming_call);
         ButterKnife.bind(this);
+
+
+
         IconListener iconListener = new IconListener();
         imageCall.setOnTouchListener(iconListener);
         imageEnd.setOnTouchListener(iconListener);
@@ -146,7 +149,7 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
 
 
     class IconListener implements View.OnTouchListener{
-        Boolean isCallIcon;
+        boolean isCallIcon, triggerAnswer;
         int iconWidth, defaultMargin, endIconInitialPosition;
         RelativeLayout.LayoutParams params;
         public boolean onTouch(View v, MotionEvent event) {
@@ -167,10 +170,13 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
                 case MotionEvent.ACTION_MOVE:
                     int x = (int)event.getRawX();
                     if (moveTheIcon(v, x)){
-                        if (isCallIcon)
-                            answerCall();
-                        else
-                            endCall();
+                        if (!triggerAnswer) {
+                            triggerAnswer = true;
+                            if (isCallIcon)
+                                answerCall();
+                            else
+                                endCall();
+                        }
                         return false;
                     }
                     break;
@@ -190,7 +196,7 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
                 if ( x >= screenWidth / 2)
                     return true;
                 params.leftMargin =  x - iconWidth / 2;
-            } else {
+            } else { // this is end call icon
                 if ( x <= screenWidth / 2)
                     return true;
                 params.rightMargin =  (endIconInitialPosition - x) + iconWidth;

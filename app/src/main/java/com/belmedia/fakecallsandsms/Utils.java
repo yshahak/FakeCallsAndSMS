@@ -1,32 +1,20 @@
 package com.belmedia.fakecallsandsms;
 
 import android.app.Activity;
-import android.content.ActivityNotFoundException;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
-
-import java.io.IOException;
-import java.io.InputStream;
 
 /**
  * Created by B.E.L on 06/07/2015.
@@ -36,7 +24,7 @@ public class Utils {
     final static int SecFactor = 1000, MinFactor = 1000*60;
     public final static String KEY_NAME = "name", KEY_NUMBER = "number", KEY_THUMBNAIL = "thumbnail";
 
-    public static Bitmap getBitmapFromUri(Uri selectedImageUri, Context context, int width, int height){
+  /*  public static Bitmap getBitmapFromUri(Uri selectedImageUri, Context context, int width, int height){
         Bitmap bm = null;
         try {
             InputStream inputStream;
@@ -91,6 +79,7 @@ public class Utils {
 
         return inSampleSize;
     }
+*/
 
     public static int getDpInPixels(int dpValue, Context ctx) {
         if (ctx != null) {
@@ -134,44 +123,36 @@ public class Utils {
         return finalTimerString;
     }
 
-    public static void loadImageFromUri(final Context context, int btnDp,@NonNull final Uri selectedImageUri, final TextView btn, final String TAG) {
-        Target loadTarget = new Target() {
-            @Override
-            public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                btn.setText(" ");
-                BitmapDrawable bitmapDrawable = new BitmapDrawable(context.getResources(), bitmap);
-                btn.setBackgroundDrawable(bitmapDrawable);
-            }
-
-            @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
-                try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), selectedImageUri);
-                    BitmapDrawable bitmapDrawable = new BitmapDrawable(bitmap);
-                    btn.setBackgroundDrawable(bitmapDrawable);
-                } catch (IOException|SecurityException e) {
-                    e.printStackTrace();
-                }
-                Log.d(TAG, "failed");
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-            }
-        };
-        int dimen = getDpInPixels(btnDp, context);
+    @SuppressWarnings("deprecation")
+    public static void loadImageFromUri(final Context context, int btnDpWidth, int btnDpHeight ,@NonNull final Uri selectedImageUri, final ImageView btn) {
+        final int width = getDpInPixels(btnDpWidth, context), height = getDpInPixels(btnDpHeight, context);
         Picasso.with(context)
                 .load(selectedImageUri)
-                .resize(dimen, dimen)
+                .resize(width, height)
                 .centerCrop()
-                .into(loadTarget);
+                .into(btn);
+    }
+
+  /*  @SuppressWarnings("deprecation")
+    public static void loadImageFromDrawableId(final Context context, int btnDp,final int drawAble_id, final TextView btn, final String TAG) {
+        int dimen = getDpInPixels(btnDp, context);
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(context.getResources(), drawAble_id, options);
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, dimen, dimen);
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        Bitmap bitmap =  BitmapFactory.decodeResource(context.getResources(), drawAble_id, options);
+        btn.setText(" ");
+        BitmapDrawable bitmapDrawable = new BitmapDrawable(context.getResources(), bitmap);
+        btn.setBackgroundDrawable(bitmapDrawable);
     }
 
     private void doCrop(Activity ctx, Uri picUri, int width, int height, int CROP_PIC_REQUEST_CODE) {
         try {
             Intent cropIntent = new Intent("com.android.camera.action.CROP");
-            cropIntent.setDataAndType(picUri, "image/*");
+            cropIntent.setDataAndType(picUri, "image*//*");
             cropIntent.putExtra("crop", "true");
             cropIntent.putExtra("aspectX", 1);
             cropIntent.putExtra("aspectY", 1);
@@ -184,7 +165,7 @@ public class Utils {
         catch (ActivityNotFoundException e) {
             ExceptionHandler.handleException(e);
         }
-    }
+    }*/
 
     public static  void pickImage(Activity activity, int SELECT_PICTURE) {
         Intent intent   = new Intent();
@@ -234,7 +215,6 @@ public class Utils {
         Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
         pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE); // Show user only contacts w/ phone numbers
         activity.startActivityForResult(pickContactIntent, selectContact);
-
     }
 
     public static Bundle loadContactFromUri(@NonNull Context context, Uri selectedContactUri) {
@@ -261,10 +241,16 @@ public class Utils {
 
         bundle.putString(KEY_NUMBER, number);
         int columnName = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+        String thumbnail = "";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             int columnThumbnailUri = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI);
-            bundle.putString(KEY_THUMBNAIL, cursor.getString(columnThumbnailUri));
+            thumbnail = cursor.getString(columnThumbnailUri);
+            if (thumbnail == null)
+                thumbnail = "android.resource://" + context.getPackageName() +"/" + String.valueOf(R.drawable.anonymous);
+        } else {
+            thumbnail = "android.resource://" + context.getPackageName() +"/" + String.valueOf(R.drawable.anonymous);
         }
+        bundle.putString(KEY_THUMBNAIL, thumbnail);
         bundle.putString(KEY_NAME, cursor.getString(columnName));
         cursor.close();
         return bundle;

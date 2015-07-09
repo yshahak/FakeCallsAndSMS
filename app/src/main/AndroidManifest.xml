@@ -3,15 +3,9 @@
     package="com.belmedia.fakecallsandsms" >
 
     <uses-permission android:name="android.permission.READ_CONTACTS" />
-
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_SMS" />
     <uses-permission android:name="android.permission.READ_SMS" />
-
-    <!--
-        <uses-permision android:name="android.permission.GLOBAL_SEARCH" />
-    -->
-
 
     <application
         android:allowBackup="true"
@@ -33,13 +27,17 @@
             android:label="@string/title_activity_incoming_activity_settings"
             android:windowSoftInputMode="stateHidden" >
         </activity>
-
-
         <activity
             android:name=".activities.FakeSMS"
             android:label="@string/title_activity_fake_sms"
             android:windowSoftInputMode="stateHidden" >
         </activity>
+        <activity
+            android:name=".activities.PickCelebActivity"
+            android:label="@string/title_activity_pick_celeb" >
+        </activity>
+
+        <receiver android:name=".SmsReceiver"/>
     </application>
 
 </manifest>
