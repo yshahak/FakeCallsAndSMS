@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="horizontal"
-    tools:showIn="@layout/activity_fake_sms">
+    tools:showIn="@layout/activity_fake_call"
+    android:layout_marginTop="5dp">
+
 
 
     <LinearLayout
@@ -17,12 +19,21 @@
 
 
         <ImageView
-            android:id="@+id/contact_picture"
-            android:gravity="center"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/gray"
-            android:src="@drawable/anonymous" />
+            android:id="@+id/contact_picture_holder"
+
+            android:gravity="top"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:src="@drawable/call_pic"
+            android:scaleType="centerInside"
+            android:background="@drawable/white_round_bkg" />
+
+        <ImageView
+            android:id="@+id/contact_picture_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="30dp"
+            android:layout_weight="1"
+            android:src="@drawable/call_add_photo_btn"/>
 
     </LinearLayout>
 
@@ -31,21 +42,29 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
+
         android:layout_gravity="center">
 
         <EditText
             android:id="@+id/editText_caller_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:paddingLeft="3dp"
+            android:layout_margin="5dp"
             android:hint="Caller name"
-            android:inputType="text" />
+            android:inputType="text"
+            android:background="@drawable/white_round_bkg_small"/>
 
         <EditText
             android:id="@+id/editText_caller_number"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:paddingLeft="3dp"
+            android:paddingRight="3dp"
             android:hint="Caller number"
-            android:inputType="numberDecimal" />
+            android:inputType="text"
+            android:background="@drawable/white_round_bkg_small" />
     </LinearLayout>
 
 

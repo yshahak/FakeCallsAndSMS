@@ -30,13 +30,13 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
     private static final int SELECT_PICTURE = 1;
     private static final int SELECT_CONTACT = 5;
     private final String TAG = getClass().getSimpleName();
-    final int  btnDpWidth = 120, btnDpwHeight = 140;
+    final int  btnDpWidth = 100, btnDpwHeight = 100;
 
     public static final String KEY_CONTACT_NAME = "contactNameSMS", KEY_CONTACT_NUMBER = "contactNumberSMS"
             , KEY_CUSTOM = "extraCustomSMS", KEY_BODY_SMS = "bodySms", KEY_CONTACT_THUMBNAIL = "contactThumbnail";
 
 
-    @Bind(R.id.contact_picture) ImageView btnAddContact;
+    @Bind(R.id.contact_picture_holder) ImageView btnAddContact;
 
 
     @Bind(R.id.editText_caller_name)  EditText editTextCallerName;

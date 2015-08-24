@@ -28,6 +28,7 @@
             android:windowSoftInputMode="stateHidden" >
         </activity>
         <activity
+            android:launchMode="singleTop"
             android:name=".activities.FakeSMS"
             android:label="@string/title_activity_fake_sms"
             android:windowSoftInputMode="stateHidden" >

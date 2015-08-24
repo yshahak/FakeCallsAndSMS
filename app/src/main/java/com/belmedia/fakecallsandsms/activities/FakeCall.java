@@ -36,10 +36,10 @@ import com.belmedia.fakecallsandsms.Utils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class FakeCall extends AppCompatActivity  implements View.OnClickListener{
+public class FakeCall extends AppCompatActivity implements View.OnClickListener{
 
     private final String TAG = getClass().getSimpleName();
-    final int  btnDpWidth = 120, btnDpwHeight = 140;
+    final int  btnDpWidth = 100, btnDpwHeight = 100;
 
     private static final int SELECT_PICTURE = 1,  CROP_PIC_REQUEST_CODE = 2,
             SELECT_MUSIC = 3, SELECT_RECORD_SOUND = 4, SELECT_CONTACT = 5, SELECT_CELEB = 6;
@@ -48,7 +48,9 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
     Uri selectedImageUri, selectedMusicUri;
     //ADDED
 
-    @Bind(R.id.contact_picture) ImageView btnAddPic;
+    @Bind(R.id.contact_picture_holder) ImageView photoHolder;
+    @Bind(R.id.contact_picture_btn) ImageView btnAddPhoto;
+
     @Bind(R.id.button_add_voice) TextView btnAddVoice;
 
 
@@ -67,7 +69,7 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
         ButterKnife.bind(this);
 
         btnAddVoice.setOnClickListener(this);
-        btnAddPic.setOnClickListener(this);
+        btnAddPhoto.setOnClickListener(this);
         findViewById(R.id.button_add_celeb).setOnClickListener(this);
         findViewById(R.id.button_add_contact).setOnClickListener(this);
 
@@ -78,7 +80,7 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
         String savedImageUri = pref.getString(KEY_IMAGE_URI, "");
         if (!"".equals(savedImageUri)) {
             selectedImageUri = Uri.parse(savedImageUri);
-            Utils.loadImageFromUri(this, btnDpWidth, btnDpwHeight, selectedImageUri, btnAddPic);
+            Utils.loadImageFromUri(this, btnDpWidth, btnDpwHeight, selectedImageUri, photoHolder);
         }
         String savedMusicUri = pref.getString(KEY_MUSIC_URI, "");
         if (!"".equals(savedMusicUri)) {
@@ -118,7 +120,7 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
                 .putString(KEY_CUSTOM,editTextCustomTime.getText().toString())
                 .putString(KEY_IMAGE_URI, imageUri)
                 .putString(KEY_MUSIC_URI, musicUri)
-                .commit();
+                .apply();
     }
 
 
@@ -152,7 +154,7 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
                 case SELECT_PICTURE:
                     selectedImageUri = data.getData();
                     if (selectedImageUri != null) {
-                        Utils.loadImageFromUri(getBaseContext(), btnDpWidth, btnDpwHeight, selectedImageUri, btnAddPic);
+                        Utils.loadImageFromUri(getBaseContext(), btnDpWidth, btnDpwHeight, selectedImageUri, photoHolder);
                     } else
                         System.out.println("selectedImagePath is null");
                     break;
@@ -166,7 +168,7 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
 
                 case SELECT_RECORD_SOUND:
                     selectedMusicUri = data.getData();
-                    btnAddVoice.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.musical_note), null, null);
+                    //btnAddVoice.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.musical_note), null, null);
                     String titleRecord = "My Record";
                     btnAddVoice.setText(titleRecord);
                     break;
@@ -180,11 +182,9 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
                         String thumbnail = bundle.getString(Utils.KEY_THUMBNAIL);
                         if (thumbnail != null) {
                             selectedImageUri = Uri.parse(thumbnail);
-                            Utils.loadImageFromUri(getBaseContext(), btnDpWidth, btnDpwHeight, selectedImageUri, btnAddPic);
+                            Utils.loadImageFromUri(getBaseContext(), btnDpWidth, btnDpwHeight, selectedImageUri, photoHolder);
                         } else {
                             selectedImageUri = null;
-                            btnAddPic.setBackgroundDrawable(null);
-                            btnAddPic.setBackgroundColor(getResources().getColor(R.color.gray));
                         }
                     }
                     break;
@@ -192,7 +192,7 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
                     int drawAble_id = data.getIntExtra(PickCelebActivity.KEY_CELEB_RESULT, R.drawable.celeb_obama);
                     String packageName = getPackageName();
                     selectedImageUri = Uri.parse("android.resource://" + packageName +"/" + drawAble_id);
-                    Utils.loadImageFromUri(getBaseContext(), btnDpWidth, btnDpwHeight, selectedImageUri, btnAddPic);
+                    Utils.loadImageFromUri(getBaseContext(), btnDpWidth, btnDpwHeight, selectedImageUri, photoHolder);
                     switch (drawAble_id){
                         case R.drawable.celeb_obama:
                             editTextCallerName.setText("Barack Obama");
@@ -214,16 +214,18 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
     }
 
     private void loadMusicFromUri() {
-        btnAddVoice.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.musical_note), null, null);
+       /* btnAddVoice.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.musical_note), null, null);
         String title = getSongNameFromURI(this, selectedMusicUri);
         if (title != null)
-            btnAddVoice.setText(title);
+            btnAddVoice.setText(title);*/
     }
 
 
 
 
     public void triggerCallAlarm(View view) {
+        PreferenceManager.getDefaultSharedPreferences(this);
+
         int id = radioGroupTimePicker.getCheckedRadioButtonId();
         int timeForTrigger = Utils.getTimeFromSpinner(id, editTextCustomTime, spinnerCustom, TAG);
 
@@ -297,7 +299,7 @@ public class FakeCall extends AppCompatActivity  implements View.OnClickListener
 
     @Override
     public void onClick(View v) {
-        if (v.equals(btnAddPic))
+        if (v.equals(btnAddPhoto))
             Utils.pickImage(this, SELECT_PICTURE);
         else if (v.equals(btnAddVoice))
             startVoiceDialog();
