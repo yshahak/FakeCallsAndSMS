@@ -10,9 +10,9 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="5"
-        android:layout_gravity="center"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:layout_gravity="center_horizontal"
         android:orientation="horizontal"   >
 
 
@@ -47,9 +47,11 @@
         android:layout_margin="5dp"   />
 
 
-    <include layout="@layout/contact_cell"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+    <include layout="@layout/contact_cell_call"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center_horizontal"
+
+        android:layout_height="wrap_content"
         android:layout_weight="9"/>
 
     <View
@@ -60,10 +62,27 @@
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_weight="3"
+        android:layout_height="wrap_content"
+        android:layout_weight="4"
         android:layout_gravity="center"
         android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/button_exist_voice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/call_add_voice_btn_clear"
+            android:drawableLeft="@drawable/call_icon_note"
+            android:padding="10dp"
+            android:visibility="gone"
+            android:text="chicken_bird"
+            android:textColor="@android:color/white"
+            android:maxLines="1"
+            android:textStyle="bold"
+            android:gravity="left|center_vertical"
+            android:textAppearance="@android:style/TextAppearance.Medium"  />
+
 
 
         <TextView
@@ -82,12 +101,14 @@
         android:layout_width="fill_parent"
         android:layout_height="1dp"
         android:background="@color/gray_line"
-        android:layout_margin="5dp"   />
+        android:layout_marginTop="5dp"   />
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="8">
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:orientation="vertical">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -95,13 +116,13 @@
             android:text="Make the call in:"
             android:textColor="@android:color/white"
             android:textStyle="bold"
-            android:textAppearance="@android:style/TextAppearance.Medium" />
+            android:textAppearance="@android:style/TextAppearance.Large" />
 
         <com.belmedia.fakecallsandsms.ToggleButtonGroupTableLayout
             android:id="@+id/radio_group_time_picker"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center">
+            android:layout_gravity="center_horizontal">
 
             <TableRow>
 
@@ -173,7 +194,7 @@
 
         </com.belmedia.fakecallsandsms.ToggleButtonGroupTableLayout>
 
-    </FrameLayout>
+    </LinearLayout>
 
 
 
@@ -187,7 +208,7 @@
     <ImageView
         android:id="@+id/button_call"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
         android:layout_weight="3"
         android:layout_gravity="center"
         android:src="@drawable/call_call_btn"

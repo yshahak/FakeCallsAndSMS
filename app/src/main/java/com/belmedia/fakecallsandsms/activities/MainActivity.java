@@ -8,14 +8,72 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.belmedia.fakecallsandsms.R;
+import com.flurry.android.FlurryAgent;
+import com.ironsource.mobilcore.CallbackResponse;
+import com.ironsource.mobilcore.MobileCore;
+import com.startapp.android.publish.Ad;
+import com.startapp.android.publish.AdEventListener;
+import com.startapp.android.publish.StartAppAd;
+import com.startapp.android.publish.StartAppSDK;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity  implements AdEventListener {
+
+    private final String StartApp_id = "207671893";
+    private final String MOBILE_CORE_TAG = "7HI5CZPBF7JTFSGYZDZOZPKDEL9VF";
+
+    private StartAppAd startAppAd = new StartAppAd(this);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        StartAppSDK.init(this, StartApp_id, true);
+        MobileCore.init(this, MOBILE_CORE_TAG, MobileCore.LOG_TYPE.PRODUCTION, MobileCore.AD_UNITS.INTERSTITIAL);
+        if (savedInstanceState == null) {
+            MobileCore.showInterstitial(this, new CallbackResponse() {
+                @Override
+                public void onConfirmation(TYPE type) {
+                    if (type != TYPE.INTERSTITIAL_NOT_READY) {
+                        startAppAd.showAd();
+                        startAppAd.loadAd();
+                    }
+                }
+            });
+        }
         setContentView(R.layout.activity_main);
     }
+
+    @Override
+    public void onStart(){
+        super.onStart();
+        FlurryAgent.onStartSession(this);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        startAppAd.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        startAppAd.onPause();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        FlurryAgent.onEndSession(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        startAppAd.onBackPressed();
+        super.onBackPressed();
+    }
+
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -48,5 +106,15 @@ public class MainActivity extends AppCompatActivity {
         }
         if (intent != null)
             startActivity(intent);
+    }
+
+    @Override
+    public void onReceiveAd(Ad ad) {
+
+    }
+
+    @Override
+    public void onFailedToReceiveAd(Ad ad) {
+
     }
 }

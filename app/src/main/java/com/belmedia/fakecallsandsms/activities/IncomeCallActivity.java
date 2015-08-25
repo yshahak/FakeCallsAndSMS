@@ -1,6 +1,7 @@
 package com.belmedia.fakecallsandsms.activities;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -21,7 +22,6 @@ import android.widget.TextView;
 
 import com.belmedia.fakecallsandsms.R;
 import com.belmedia.fakecallsandsms.Utils;
-import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
@@ -45,10 +45,12 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
     final int contactDPsize = 300, imageBtnMargin = 50;
     int screenWidth;
     MediaPlayer mp;
+    private Uri imageUri;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_incoming_call);
         ButterKnife.bind(this);
 
@@ -58,15 +60,10 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
         imageCall.setOnTouchListener(iconListener);
         imageEnd.setOnTouchListener(iconListener);
 
-        Uri imageUri = getIntent().getParcelableExtra(FakeCall.KEY_IMAGE_URI);
+        imageUri = getIntent().getParcelableExtra(FakeCall.KEY_IMAGE_URI);
         screenWidth =  getWindowManager().getDefaultDisplay().getWidth();
         if (imageUri != null){
-            int height = Utils.getDpInPixels(contactDPsize, this);
-            Picasso.with(this)
-                    .load(imageUri)
-                    .resize(screenWidth, height)
-                    .centerCrop()
-                    .into(imageContact);
+            Utils.loadImageFromUri(IncomeCallActivity.this, imageUri, imageContact);
         }
 
         String contactName = getIntent().getStringExtra(FakeCall.KEY_CONTACT_NAME);
@@ -83,6 +80,8 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
     }
 
 
+
+
     public void answerCall() {
         if (mp.isPlaying()) {
             mp.stop();
@@ -96,6 +95,7 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
         imageEnd.setLayoutParams(params);
         imageEnd.setOnTouchListener(null);
         imageEnd.setOnClickListener(this);
+        imageEnd.setImageResource(R.drawable.hung_up_btn_clear);
 
         Uri musicUri = getIntent().getParcelableExtra(FakeCall.KEY_MUSIC_URI);
         if (musicUri != null){

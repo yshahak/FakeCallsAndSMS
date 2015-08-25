@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    tools:showIn="@layout/activity_fake_call"
+    android:layout_marginTop="5dp">
+
+
+
+    <LinearLayout
+        android:gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="@dimen/contact_margin_right"
+        android:orientation="vertical"
+        android:layout_gravity="center">
+
+
+        <ImageView
+            android:id="@+id/contact_picture_holder"
+
+            android:gravity="top"
+            android:layout_width="160dp"
+            android:layout_height="160dp"
+            android:src="@drawable/call_pic"
+            android:scaleType="centerInside"
+            android:background="@drawable/white_round_bkg" />
+
+        <ImageView
+            android:layout_marginTop="@dimen/add_photo_margin_top"
+            android:id="@+id/contact_picture_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/call_add_photo_btn"/>
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="@dimen/contact_margin_right"
+
+        android:layout_gravity="center">
+
+        <EditText
+            android:id="@+id/editText_caller_name"
+            android:layout_width="@dimen/edit_text_width"
+            android:layout_height="wrap_content"
+            android:paddingLeft="5dp"
+            android:layout_margin="@dimen/edit_text_contact_margin"
+            android:hint="Caller name"
+            android:inputType="text"
+            android:background="@drawable/white_round_bkg_small"/>
+
+        <EditText
+            android:id="@+id/editText_caller_number"
+            android:layout_width="@dimen/edit_text_width"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/edit_text_contact_margin"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:hint="Caller number"
+            android:inputType="text"
+            android:background="@drawable/white_round_bkg_small" />
+    </LinearLayout>
+
+
+</LinearLayout>

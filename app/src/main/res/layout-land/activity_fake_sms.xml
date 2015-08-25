@@ -1,0 +1,103 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:padding="5dp"
+    tools:context="com.belmedia.fakecallsandsms.activities.FakeCall"
+    android:background="@drawable/bg_repeat">
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:orientation="vertical">
+
+        <include layout="@layout/contact_cell_sms"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/button_exist_voice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:background="@drawable/call_add_voice_btn_clear"
+                android:drawableLeft="@drawable/call_icon_note"
+                android:padding="10dp"
+                android:visibility="gone"
+                android:text="chicken_bird"
+                android:textColor="@android:color/white"
+                android:maxLines="1"
+                android:textStyle="bold"
+                android:gravity="left|center_vertical"
+                android:textAppearance="@android:style/TextAppearance.Medium"  />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray_line"
+            android:layout_margin="5dp"   />
+
+
+        <include layout="@layout/time_trigger_box_sms"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:layout_marginTop="50dp"
+        android:orientation="vertical">
+
+        <EditText
+            android:gravity="left"
+            android:padding="@dimen/sms_edit_padding"
+            android:layout_margin="@dimen/sms_edit_padding"
+            android:layout_marginBottom="@dimen/sms_edit_padding"
+
+            android:id="@+id/editText_body_sms"
+            android:hint="Massage body..."
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:inputType="textMultiLine"
+            android:lines="3"
+            android:minLines="4"
+            android:maxLines="10"
+            android:scrollbars="vertical"
+            android:background="@drawable/white_round_bkg"/>
+
+
+
+
+        <View
+            android:layout_width="fill_parent"
+            android:layout_height="1dp"
+            android:background="@color/gray_line"
+            android:layout_margin="5dp"   />
+
+        <ImageView
+            android:id="@+id/button_call"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/sms_send_btn"
+            android:layout_gravity="center"
+            android:onClick="triggerSmsSend"/>
+
+
+    </LinearLayout>
+
+</LinearLayout>

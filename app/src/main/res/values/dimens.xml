@@ -5,4 +5,14 @@
     <dimen name="image_view_slot_dimen">140dp</dimen>
     <dimen name="pick_slot_height">120dp</dimen>
     <dimen name="check_box_height">25dp</dimen>
+    <dimen name="edit_text_contact_margin">5dp</dimen>
+    <dimen name="add_photo_margin_top">10dp</dimen>
+    <dimen name="edit_text_width">130dp</dimen>
+    <dimen name="contact_margin_right">30dp</dimen>
+    <dimen name="land_pick_margin">5dp</dimen>
+    <dimen name="sms_edit_padding">5dp</dimen>
+    <dimen name="sms_btn_margin">5dp</dimen>
+    <dimen name="radio_row_margin">2dp</dimen>
+    <dimen name="income_income_text_size">15sp</dimen>
+    <dimen name="income_btn_margin">15dp</dimen>
 </resources>

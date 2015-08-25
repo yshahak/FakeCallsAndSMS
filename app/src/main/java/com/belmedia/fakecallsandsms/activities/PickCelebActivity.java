@@ -32,8 +32,7 @@ public class PickCelebActivity extends AppCompatActivity {
         setContentView(R.layout.activity_caleb_gallery);
         ButterKnife.bind(this);
         ctx =this;
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
+
         recyclerView.setHasFixedSize(true);
 
         // use a linear layout manager
@@ -41,7 +40,8 @@ public class PickCelebActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(mLayoutManager);
 
         // specify an adapter (see also next example)
-        int[] myImageList = new int[]{R.drawable.celeb_obama , R.drawable.celeb_golda, R.drawable.celeb_hawking};
+        int[] myImageList = new int[]{R.drawable.celebs_obama , R.drawable.celebs_kim, R.drawable.celebs_bye,
+        R.drawable.celebs_minion, R.drawable.celebs_cat};
 
         mAdapter = new MyAdapter(myImageList, getIntent());
         recyclerView.setAdapter(mAdapter);
@@ -70,10 +70,6 @@ public class PickCelebActivity extends AppCompatActivity {
         private int[] mDataSet;
         private Intent callerActivityIntent;
 
-
-        // Provide a reference to the views for each data item
-        // Complex data items may need more than one view per item, and
-        // you provide access to all the views for a data item in a view holder
         public  class ViewHolder extends RecyclerView.ViewHolder {
             private ImageView celebImage;
             public int drawable_id;

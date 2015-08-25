@@ -59,7 +59,7 @@ public class SmsReceiver extends BroadcastReceiver {
         }
         Bitmap bitmap = null;
         if (thumbNail.equals("") || thumbNail == null) {
-            bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.anonymous);
+            bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.celebs_unknown);
         } else {
             try {
                 bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.parse(thumbNail));

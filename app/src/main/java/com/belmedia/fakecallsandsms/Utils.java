@@ -4,20 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
-import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.Target;
 
 /**
  * Created by B.E.L on 06/07/2015.
@@ -127,64 +123,15 @@ public class Utils {
     }
 
     @SuppressWarnings("deprecation")
-    public static void loadImageFromUri(final Context context, int btnDpWidth, int btnDpHeight ,@NonNull final Uri selectedImageUri, final ImageView btn) {
-        final int width = getDpInPixels(btnDpWidth, context), height = getDpInPixels(btnDpHeight, context);
+    public static void loadImageFromUri(@NonNull final Context context,@NonNull final Uri selectedImageUri,@NonNull final ImageView btn) {
+        //int width = btn.getWidth(), height = btn.getHeight();
         Picasso.with(context)
                 .load(selectedImageUri)
-                .resize(width, height)
-                .centerInside()
-                .into(new Target() {
-                    @Override
-                    public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
-                        btn.setBackgroundDrawable(null);
-                        btn.setImageBitmap(bitmap);
-                    }
-
-                    @Override
-                    public void onBitmapFailed(Drawable errorDrawable) {
-                        Log.d("TAG", "bitmap failed");
-                    }
-
-                    @Override
-                    public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-                    }
-                });
+                .fit()
+                .into(btn);
     }
 
-  /*  @SuppressWarnings("deprecation")
-    public static void loadImageFromDrawableId(final Context context, int btnDp,final int drawAble_id, final TextView btn, final String TAG) {
-        int dimen = getDpInPixels(btnDp, context);
-        final BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true;
-        BitmapFactory.decodeResource(context.getResources(), drawAble_id, options);
-        // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, dimen, dimen);
-        // Decode bitmap with inSampleSize set
-        options.inJustDecodeBounds = false;
-        Bitmap bitmap =  BitmapFactory.decodeResource(context.getResources(), drawAble_id, options);
-        btn.setText(" ");
-        BitmapDrawable bitmapDrawable = new BitmapDrawable(context.getResources(), bitmap);
-        btn.setBackgroundDrawable(bitmapDrawable);
-    }
 
-    private void doCrop(Activity ctx, Uri picUri, int width, int height, int CROP_PIC_REQUEST_CODE) {
-        try {
-            Intent cropIntent = new Intent("com.android.camera.action.CROP");
-            cropIntent.setDataAndType(picUri, "image*//*");
-            cropIntent.putExtra("crop", "true");
-            cropIntent.putExtra("aspectX", 1);
-            cropIntent.putExtra("aspectY", 1);
-            cropIntent.putExtra("outputX", width);
-            cropIntent.putExtra("outputY", height);
-            cropIntent.putExtra("return-data", true);
-            ctx.startActivityForResult(cropIntent, CROP_PIC_REQUEST_CODE);
-        }
-        // respond to users whose devices do not support the crop action
-        catch (ActivityNotFoundException e) {
-            ExceptionHandler.handleException(e);
-        }
-    }*/
 
     public static  void pickImage(Activity activity, int SELECT_PICTURE) {
         Intent intent   = new Intent();
@@ -210,6 +157,9 @@ public class Utils {
             case R.id.radioButton15min:
                 timeForTrigger = 15 * MinFactor;
                 break;
+            case R.id.radioButton30min:
+                timeForTrigger = 30 * MinFactor;
+                break;
             case R.id.radioButtonCustom:
                 String customTime =  editTextCustomTime.getText().toString();
                 if (customTime.equals(""))
@@ -217,7 +167,6 @@ public class Utils {
                 else {
                     boolean spinnerIsInSeconds = (spinnerCustom.getSelectedItemPosition() == 0);
                     int value = Integer.valueOf(customTime);
-                    Log.d(TAG, Integer.toString(value));
                     if (spinnerIsInSeconds)
                         timeForTrigger = value * SecFactor;
                     else
@@ -265,9 +214,9 @@ public class Utils {
             int columnThumbnailUri = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI);
             thumbnail = cursor.getString(columnThumbnailUri);
             if (thumbnail == null)
-                thumbnail = "android.resource://" + context.getPackageName() +"/" + String.valueOf(R.drawable.anonymous);
+                thumbnail = "android.resource://" + context.getPackageName() +"/" + String.valueOf(R.drawable.celebs_unknown);
         } else {
-            thumbnail = "android.resource://" + context.getPackageName() +"/" + String.valueOf(R.drawable.anonymous);
+            thumbnail = "android.resource://" + context.getPackageName() +"/" + String.valueOf(R.drawable.celebs_unknown);
         }
         bundle.putString(KEY_THUMBNAIL, thumbnail);
         bundle.putString(KEY_NAME, cursor.getString(columnName));

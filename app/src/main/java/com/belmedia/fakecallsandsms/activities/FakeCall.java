@@ -36,31 +36,38 @@ import com.belmedia.fakecallsandsms.Utils;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class FakeCall extends AppCompatActivity implements View.OnClickListener{
+public class FakeCall extends AppCompatActivity implements View.OnClickListener {
 
     private final String TAG = getClass().getSimpleName();
-    final int  btnDpWidth = 100, btnDpwHeight = 100;
+    //final int  btnDpWidth = 100, btnDpwHeight = 100;
 
-    private static final int SELECT_PICTURE = 1,  CROP_PIC_REQUEST_CODE = 2,
+    private static final int SELECT_PICTURE = 1, CROP_PIC_REQUEST_CODE = 2,
             SELECT_MUSIC = 3, SELECT_RECORD_SOUND = 4, SELECT_CONTACT = 5, SELECT_CELEB = 6;
-    public static final String KEY_IMAGE_URI = "imageUriCall", KEY_MUSIC_URI = "musicUriCall"
-            ,KEY_CONTACT_NAME = "contactNameCall", KEY_CONTACT_NUMBER = "contactNumberCall", KEY_CUSTOM = "extraCustomCall";
+    public static final String KEY_IMAGE_URI = "imageUriCall", KEY_MUSIC_URI = "musicUriCall", KEY_CONTACT_NAME = "contactNameCall", KEY_CONTACT_NUMBER = "contactNumberCall", KEY_CUSTOM = "extraCustomCall";
     Uri selectedImageUri, selectedMusicUri;
     //ADDED
 
-    @Bind(R.id.contact_picture_holder) ImageView photoHolder;
-    @Bind(R.id.contact_picture_btn) ImageView btnAddPhoto;
+    @Bind(R.id.contact_picture_holder)
+    ImageView photoHolder;
+    @Bind(R.id.contact_picture_btn)
+    ImageView btnAddPhoto;
 
-    @Bind(R.id.button_add_voice) TextView btnAddVoice;
+    @Bind(R.id.button_add_voice)
+    TextView btnAddVoice;
 
 
-    @Bind(R.id.editText_caller_name) EditText editTextCallerName;
-    @Bind(R.id.editText_caller_number) EditText editTextCallerNumber;
-    @Bind(R.id.editText_custom_time) EditText editTextCustomTime;
+    @Bind(R.id.editText_caller_name)
+    EditText editTextCallerName;
+    @Bind(R.id.editText_caller_number)
+    EditText editTextCallerNumber;
+    @Bind(R.id.editText_custom_time)
+    EditText editTextCustomTime;
 
     @Bind(R.id.radio_group_time_picker)
     ToggleButtonGroupTableLayout radioGroupTimePicker;
-    @Bind(R.id.spinner_custom) Spinner spinnerCustom;
+    @Bind(R.id.spinner_custom)
+    Spinner spinnerCustom;
+    private SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,14 +80,14 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener{
         findViewById(R.id.button_add_celeb).setOnClickListener(this);
         findViewById(R.id.button_add_contact).setOnClickListener(this);
 
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
         editTextCallerName.setText(pref.getString(KEY_CONTACT_NAME, ""));
         editTextCallerNumber.setText(pref.getString(KEY_CONTACT_NUMBER, ""));
         editTextCustomTime.setText(pref.getString(KEY_CUSTOM, ""));
         String savedImageUri = pref.getString(KEY_IMAGE_URI, "");
         if (!"".equals(savedImageUri)) {
             selectedImageUri = Uri.parse(savedImageUri);
-            Utils.loadImageFromUri(this, btnDpWidth, btnDpwHeight, selectedImageUri, photoHolder);
+            Utils.loadImageFromUri(FakeCall.this, selectedImageUri, photoHolder);
         }
         String savedMusicUri = pref.getString(KEY_MUSIC_URI, "");
         if (!"".equals(savedMusicUri)) {
@@ -105,6 +112,7 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener{
 
     }
 
+
     @Override
     protected void onStop() {
         super.onStop();
@@ -117,12 +125,11 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener{
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         pref.edit().putString(KEY_CONTACT_NAME, editTextCallerName.getText().toString())
                 .putString(KEY_CONTACT_NUMBER, editTextCallerNumber.getText().toString())
-                .putString(KEY_CUSTOM,editTextCustomTime.getText().toString())
+                .putString(KEY_CUSTOM, editTextCustomTime.getText().toString())
                 .putString(KEY_IMAGE_URI, imageUri)
                 .putString(KEY_MUSIC_URI, musicUri)
                 .apply();
     }
-
 
 
     @Override
@@ -146,7 +153,6 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener{
     }
 
 
-
     @SuppressWarnings("deprecation")
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
@@ -154,7 +160,7 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener{
                 case SELECT_PICTURE:
                     selectedImageUri = data.getData();
                     if (selectedImageUri != null) {
-                        Utils.loadImageFromUri(getBaseContext(), btnDpWidth, btnDpwHeight, selectedImageUri, photoHolder);
+                        Utils.loadImageFromUri(getBaseContext(), selectedImageUri, photoHolder);
                     } else
                         System.out.println("selectedImagePath is null");
                     break;
@@ -182,29 +188,37 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener{
                         String thumbnail = bundle.getString(Utils.KEY_THUMBNAIL);
                         if (thumbnail != null) {
                             selectedImageUri = Uri.parse(thumbnail);
-                            Utils.loadImageFromUri(getBaseContext(), btnDpWidth, btnDpwHeight, selectedImageUri, photoHolder);
+                            Utils.loadImageFromUri(getBaseContext(), selectedImageUri, photoHolder);
                         } else {
                             selectedImageUri = null;
                         }
                     }
                     break;
                 case SELECT_CELEB:
-                    int drawAble_id = data.getIntExtra(PickCelebActivity.KEY_CELEB_RESULT, R.drawable.celeb_obama);
+                    int drawAble_id = data.getIntExtra(PickCelebActivity.KEY_CELEB_RESULT, R.drawable.celebs_obama);
                     String packageName = getPackageName();
-                    selectedImageUri = Uri.parse("android.resource://" + packageName +"/" + drawAble_id);
-                    Utils.loadImageFromUri(getBaseContext(), btnDpWidth, btnDpwHeight, selectedImageUri, photoHolder);
-                    switch (drawAble_id){
-                        case R.drawable.celeb_obama:
+                    selectedImageUri = Uri.parse("android.resource://" + packageName + "/" + drawAble_id);
+                    Utils.loadImageFromUri(getBaseContext(), selectedImageUri, photoHolder);
+                    switch (drawAble_id) {
+                        case R.drawable.celebs_obama:
                             editTextCallerName.setText("Barack Obama");
-                            editTextCallerNumber.setText("058-699669");
+                            editTextCallerNumber.setText("201-925-0000");
                             break;
-                        case R.drawable.celeb_golda:
-                            editTextCallerName.setText("גולדה מאיר");
-                            editTextCallerNumber.setText("052-296569");
+                        case R.drawable.celebs_kim:
+                            editTextCallerName.setText("Kim Kardashian");
+                            editTextCallerNumber.setText("201-546-6577");
                             break;
-                        case R.drawable.celeb_hawking:
-                            editTextCallerName.setText("Stephen Hawking");
-                            editTextCallerNumber.setText("050-934015");
+                        case R.drawable.celebs_bye:
+                            editTextCallerName.setText("Beyoncé");
+                            editTextCallerNumber.setText("201-126-6657");
+                            break;
+                        case R.drawable.celebs_minion:
+                            editTextCallerName.setText("My Yellow Mate");
+                            editTextCallerNumber.setText("001-556-9999");
+                            break;
+                        case R.drawable.celebs_cat:
+                            editTextCallerName.setText("My Cat");
+                            editTextCallerNumber.setText("0000");
                             break;
                     }
                     break;
@@ -214,17 +228,25 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener{
     }
 
     private void loadMusicFromUri() {
-       /* btnAddVoice.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.musical_note), null, null);
+        btnAddVoice.setVisibility(View.GONE);
+        btnAddVoice = (TextView) findViewById(R.id.button_exist_voice);
+        btnAddVoice.setVisibility(View.VISIBLE);
+        btnAddVoice.setOnClickListener(this);
         String title = getSongNameFromURI(this, selectedMusicUri);
         if (title != null)
-            btnAddVoice.setText(title);*/
+            btnAddVoice.setText(title);
+    }
+
+    private void removeMusicFromUri() {
+        btnAddVoice.setVisibility(View.GONE);
+        btnAddVoice = (TextView) findViewById(R.id.button_add_voice);
+        btnAddVoice.setVisibility(View.VISIBLE);
+        btnAddVoice.setOnClickListener(this);
     }
 
 
-
-
     public void triggerCallAlarm(View view) {
-        PreferenceManager.getDefaultSharedPreferences(this);
+        //PreferenceManager.getDefaultSharedPreferences(this);
 
         int id = radioGroupTimePicker.getCheckedRadioButtonId();
         int timeForTrigger = Utils.getTimeFromSpinner(id, editTextCustomTime, spinnerCustom, TAG);
@@ -234,14 +256,14 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener{
             incomeCallActivity.putExtra(KEY_IMAGE_URI, selectedImageUri);
         if (selectedMusicUri != null)
             incomeCallActivity.putExtra(KEY_MUSIC_URI, selectedMusicUri);
-        String contactName =  editTextCallerName.getText().toString();
+        String contactName = editTextCallerName.getText().toString();
         if (!contactName.equals(""))
             incomeCallActivity.putExtra(KEY_CONTACT_NAME, contactName);
-        String contactNumber =  editTextCallerNumber.getText().toString();
+        String contactNumber = editTextCallerNumber.getText().toString();
         if (!contactNumber.equals(""))
             incomeCallActivity.putExtra(KEY_CONTACT_NUMBER, contactNumber);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0,  incomeCallActivity, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, incomeCallActivity, 0);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeForTrigger, pendingIntent);
 
@@ -256,11 +278,12 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener{
     public void startVoiceDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage("Choose source of voice")
-                .setPositiveButton("From device media", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Clear", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
-                        startActivityForResult(i, SELECT_MUSIC);
+                        selectedMusicUri = null;
+                        pref.edit().putString(KEY_MUSIC_URI, "").apply();
+                        removeMusicFromUri();
                     }
                 })
                 .setNegativeButton("Record new voice", new DialogInterface.OnClickListener() {
@@ -276,19 +299,27 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener{
                             }
                         }
 
-                ).
-
-                    create()
-
-                    .
-
-                    show();
+                ).setNeutralButton("Record new voice", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+                        try {
+                            startActivityForResult(intent, SELECT_RECORD_SOUND);
+                        } catch (ActivityNotFoundException e) {
+                            ExceptionHandler.handleException(e);
+                            Toast.makeText(getBaseContext(), "Your device miss built in recorder", Toast.LENGTH_LONG).show();
+                        }
+                    }
                 }
 
+        )
+                .create()
+                .show();
+    }
 
 
     private String getSongNameFromURI(Context context, Uri contentUri) {
-        String[] projection = { MediaStore.Audio.Media.TITLE };
+        String[] projection = {MediaStore.Audio.Media.TITLE};
         CursorLoader loader = new CursorLoader(context, contentUri, projection, null, null, null);
         Cursor cursor = loader.loadInBackground();
         int songTitle_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
