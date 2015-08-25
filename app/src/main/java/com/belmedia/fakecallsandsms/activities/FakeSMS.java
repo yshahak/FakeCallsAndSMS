@@ -106,61 +106,6 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
                 .apply();
     }
 
-    /*private void sendSms() {
-        ContentValues values = new ContentValues();
-        values.put("address", contactData.number);
-        values.put("body", editTextBodySms.getText().toString());
-        getContentResolver().insert(Uri.parse("content://sms/inbox"), values);
-        getContentResolver().notifyChange(Uri.parse("content://sms/inbox"), null);
-        buildSmsNotification(contactData.name, editTextBodySms.getText().toString());
-    }*/
-
-    /*private void buildSmsNotification(String title, String message){
-        Intent launchIntent;
-        Uri uriSound= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(this);
-            launchIntent = new Intent(Intent.ACTION_SEND);
-            launchIntent.setType("text/plain");
-            if (defaultSmsPackageName != null) {
-                launchIntent.setPackage(defaultSmsPackageName);
-            }
-        } else {
-            String SMS_MIME_TYPE = "vnd.android-dir/mms-sms";
-            launchIntent = new Intent(Intent.ACTION_MAIN);
-            launchIntent.setType(SMS_MIME_TYPE);
-        }
-        Bitmap bitmap = null;
-        if (!contactData.thumbnailUri.equals("") ) {
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), Uri.parse(contactData.thumbnailUri));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } else {
-            bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.anonymous);
-        }
-        NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(this);
-        if (bitmap != null) {
-            mBuilder.setContentTitle(title)
-                    .setContentText(message)
-                    .setAutoCancel(true)
-                    .setLargeIcon(bitmap)
-                    .setSmallIcon(android.R.drawable.stat_notify_chat)
-                    .setPriority(Notification.PRIORITY_HIGH)
-                    .setSound(uriSound);
-        } else {
-            mBuilder.setContentTitle(title)
-                    .setContentText(message)
-                    .setAutoCancel(true)
-                    .setSmallIcon(android.R.drawable.stat_notify_chat)
-                    .setPriority(Notification.PRIORITY_HIGH)
-                    .setSound(uriSound);
-        }
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(this, 0, launchIntent, 0);
-        mBuilder.setContentIntent(resultPendingIntent);
-        ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).notify(1, mBuilder.build());
-    }*/
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
