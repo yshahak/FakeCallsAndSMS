@@ -1,6 +1,7 @@
 package com.belmedia.fakecallsandsms.activities;
 
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -25,10 +26,12 @@ public class MainActivity extends AppCompatActivity  implements AdEventListener 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        boolean isDebuggable =  ( 0 != ( getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE ) );
+
         super.onCreate(savedInstanceState);
         StartAppSDK.init(this, StartApp_id, true);
         MobileCore.init(this, MOBILE_CORE_TAG, MobileCore.LOG_TYPE.PRODUCTION, MobileCore.AD_UNITS.INTERSTITIAL);
-        if (savedInstanceState == null) {
+        if (savedInstanceState == null && !isDebuggable) {
             MobileCore.showInterstitial(this, new CallbackResponse() {
                 @Override
                 public void onConfirmation(TYPE type) {

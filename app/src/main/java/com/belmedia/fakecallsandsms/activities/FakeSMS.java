@@ -19,9 +19,9 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 
 import com.belmedia.fakecallsandsms.R;
-import com.belmedia.fakecallsandsms.SmsReceiver;
 import com.belmedia.fakecallsandsms.ToggleButtonGroupTableLayout;
 import com.belmedia.fakecallsandsms.Utils;
+import com.belmedia.fakecallsandsms.sms.SmsReceiver;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -30,24 +30,29 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
     private static final int SELECT_PICTURE = 1;
     private static final int SELECT_CONTACT = 5;
     private final String TAG = getClass().getSimpleName();
-    final int  btnDpWidth = 100, btnDpwHeight = 100;
+    final int btnDpWidth = 100, btnDpwHeight = 100;
 
-    public static final String KEY_CONTACT_NAME = "contactNameSMS", KEY_CONTACT_NUMBER = "contactNumberSMS"
-            , KEY_CUSTOM = "extraCustomSMS", KEY_BODY_SMS = "bodySms", KEY_CONTACT_THUMBNAIL = "contactThumbnail";
-
-
-    @Bind(R.id.contact_picture_holder) ImageView btnAddContact;
+    public static final String KEY_CONTACT_NAME = "contactNameSMS", KEY_CONTACT_NUMBER = "contactNumberSMS", KEY_CUSTOM = "extraCustomSMS", KEY_BODY_SMS = "bodySms", KEY_CONTACT_THUMBNAIL = "contactThumbnail";
 
 
-    @Bind(R.id.editText_caller_name)  EditText editTextCallerName;
-    @Bind(R.id.editText_caller_number) EditText editTextCallerNumber;
-    @Bind(R.id.editText_custom_time) EditText editTextCustomTime;
-    @Bind(R.id.editText_body_sms) EditText editTextBodySms;
+    @Bind(R.id.contact_picture_holder)
+    ImageView btnAddContact;
+
+
+    @Bind(R.id.editText_caller_name)
+    EditText editTextCallerName;
+    @Bind(R.id.editText_caller_number)
+    EditText editTextCallerNumber;
+    @Bind(R.id.editText_custom_time)
+    EditText editTextCustomTime;
+    @Bind(R.id.editText_body_sms)
+    EditText editTextBodySms;
     @Bind(R.id.radio_group_time_picker)
     ToggleButtonGroupTableLayout radioGroupTimePicker;
     @Bind(R.id.spinner_custom)
     Spinner spinnerCustom;
     ContactData contactData;
+    public static String defaultSmsApp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +65,7 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
         contactData.name = pref.getString(KEY_CONTACT_NAME, "");
         contactData.number = pref.getString(KEY_CONTACT_NUMBER, "");
-        contactData.thumbnailUri = pref.getString(KEY_CONTACT_THUMBNAIL, "android.resource://" + getPackageName() +"/" + String.valueOf(R.drawable.celebs_unknown));
+        contactData.thumbnailUri = pref.getString(KEY_CONTACT_THUMBNAIL, "android.resource://" + getPackageName() + "/" + String.valueOf(R.drawable.celebs_unknown));
         Utils.loadImageFromUri(FakeSMS.this, Uri.parse(contactData.thumbnailUri), btnAddContact);
 
         editTextCallerName.setText(contactData.name);
@@ -85,7 +90,6 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
         });
 
     }
-
 
 
     @Override
@@ -139,7 +143,7 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
                 case SELECT_CONTACT:
                     Uri selectedContactUri = data.getData();
                     if (selectedContactUri != null) {
-                        Bundle bundle = Utils.loadContactFromUri(getBaseContext(),  selectedContactUri);
+                        Bundle bundle = Utils.loadContactFromUri(getBaseContext(), selectedContactUri);
                         contactData.number = bundle.getString(Utils.KEY_NUMBER);
                         contactData.name = bundle.getString(Utils.KEY_NAME);
                         contactData.thumbnailUri = bundle.getString(Utils.KEY_THUMBNAIL);
@@ -153,36 +157,56 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
                         }
                     }
                     break;
+                /*case 11:
+                    final String myPackageName = getPackageName();
+                    if (Telephony.Sms.getDefaultSmsPackage(this).equals(myPackageName)) {
+                        callToSmsBroadcast();
+                    }*/
             }
 
         }
     }
 
 
-
     public void triggerSmsSend(View view) {
+       /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            boolean canWriteSms = false;
+
+            if(!SmsWriteOpUtil.isWriteEnabled(getApplicationContext())) {
+                canWriteSms = SmsWriteOpUtil.setWriteEnabled(getApplicationContext(), true);
+            }
+            Log.d("TAG", Boolean.toString(canWriteSms));
+            //Get default sms app
+            defaultSmsApp = Telephony.Sms.getDefaultSmsPackage(this);
+            final String myPackageName = getPackageName();
+            if (!defaultSmsApp.equals(myPackageName)) {
+
+                //Change the default sms app to my app
+                Intent intent = new Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT);
+                intent.putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, getPackageName());
+                startActivityForResult(intent, 11);
+            } else {
+                callToSmsBroadcast();
+            }
+        } else
+            callToSmsBroadcast();*/
+        callToSmsBroadcast();
+
+    }
+
+    private void callToSmsBroadcast() {
         int id = radioGroupTimePicker.getCheckedRadioButtonId();
         int timeForTrigger = Utils.getTimeFromSpinner(id, editTextCustomTime, spinnerCustom, TAG);
-
         Intent smsBroadcastIntent = new Intent(this, SmsReceiver.class);
         smsBroadcastIntent.putExtra(KEY_CONTACT_NAME, contactData.name);
         smsBroadcastIntent.putExtra(KEY_CONTACT_NUMBER, contactData.number);
         smsBroadcastIntent.putExtra(KEY_CONTACT_THUMBNAIL, contactData.thumbnailUri);
         smsBroadcastIntent.putExtra(KEY_BODY_SMS, editTextBodySms.getText().toString());
 
-
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, smsBroadcastIntent, 0);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeForTrigger, pendingIntent);
 
-        /*view.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //sendSms();
-            }
-        }, timeForTrigger);*/
-
-        //show home screen
         Intent startMain = new Intent(Intent.ACTION_MAIN);
         startMain.addCategory(Intent.CATEGORY_HOME);
         startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -194,4 +218,5 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
         public String number;
         public String thumbnailUri;
     }
+
 }

@@ -80,7 +80,11 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
     }
 
 
-
+    @Override
+    protected void onStop() {
+        super.onStop();
+        endCall(0);
+    }
 
     public void answerCall() {
         if (mp.isPlaying()) {
@@ -117,11 +121,12 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
     }
 
 
-    public void endCall() {
+    public void endCall(int delayToFinish) {
         mp.stop();
+        mp.release();
         containerContactTexts.setBackgroundColor(getResources().getColor(R.color.red));
         textIncomeCall.setText(getString(R.string.end_call));
-        textIncomeCall.postDelayed(finish, 1300);
+        textIncomeCall.postDelayed(finish, delayToFinish);
         textIncomeCall.removeCallbacks(updateTimeOfCall);
     }
 
@@ -144,7 +149,7 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
 
     @Override
     public void onClick(View v) {
-        endCall();
+        endCall(1300);
     }
 
 
@@ -175,7 +180,7 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
                             if (isCallIcon)
                                 answerCall();
                             else
-                                endCall();
+                                endCall(100);
                         }
                         return false;
                     }

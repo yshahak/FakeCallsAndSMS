@@ -24,10 +24,20 @@
         <TableRow>
 
             <RadioButton
-                android:id="@+id/radioButton10sec"
+                android:id="@+id/radioButton5sec"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/check_box_height"
                 android:checked="true"
+                android:textColor="#ffffff"
+
+                android:text="5 sec"
+                android:textAppearance="@style/checkBox_style" />
+
+
+            <RadioButton
+                android:id="@+id/radioButton10sec"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/check_box_height"
                 android:textColor="#ffffff"
 
                 android:text="10 sec"
@@ -41,23 +51,25 @@
                 android:text="30 sec"
                 android:textAppearance="@style/checkBox_style" />
 
+
+        </TableRow>
+
+        <TableRow>
+
             <RadioButton
                 android:id="@+id/radioButton5min"
                 android:layout_width="wrap_content"
                 android:textColor="#ffffff"
 
                 android:layout_height="@dimen/check_box_height"
-                android:text="5 minutes"
+                android:text="5 min"
                 android:textAppearance="@style/checkBox_style" />
-        </TableRow>
-
-        <TableRow>
 
             <RadioButton
                 android:id="@+id/radioButton15min"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/check_box_height"
-                android:text="15 minutes"
+                android:text="15 min"
                 android:textColor="#ffffff"
 
                 android:textAppearance="@style/checkBox_style" />
@@ -66,7 +78,7 @@
                 android:id="@+id/radioButton30min"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/check_box_height"
-                android:text="30 minutes"
+                android:text="30 min"
                 android:textColor="#ffffff"
 
                 android:textAppearance="@style/checkBox_style" />

@@ -41,7 +41,7 @@ public class PickCelebActivity extends AppCompatActivity {
 
         // specify an adapter (see also next example)
         int[] myImageList = new int[]{R.drawable.celebs_obama , R.drawable.celebs_kim, R.drawable.celebs_bye,
-        R.drawable.celebs_minion, R.drawable.celebs_cat};
+         R.drawable.celebs_cat};
 
         mAdapter = new MyAdapter(myImageList, getIntent());
         recyclerView.setAdapter(mAdapter);

@@ -25,10 +25,20 @@
         <TableRow>
 
             <RadioButton
-                android:id="@+id/radioButton10sec"
+                android:id="@+id/radioButton5sec"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/check_box_height"
                 android:checked="true"
+                android:textColor="#ffffff"
+
+                android:text="5 sec"
+                android:textAppearance="@style/checkBox_style" />
+
+
+            <RadioButton
+                android:id="@+id/radioButton10sec"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/check_box_height"
                 android:textColor="#ffffff"
 
                 android:text="10 sec"
@@ -38,40 +48,40 @@
                 android:id="@+id/radioButton30sec"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/check_box_height"
-                android:text="30 sec"
                 android:textColor="#ffffff"
-
+                android:text="30 sec"
                 android:textAppearance="@style/checkBox_style" />
+
+
+        </TableRow>
+
+        <TableRow>
 
             <RadioButton
                 android:id="@+id/radioButton5min"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/check_box_height"
-                android:text="5 minutes"
                 android:textColor="#ffffff"
 
+                android:layout_height="@dimen/check_box_height"
+                android:text="5 min"
                 android:textAppearance="@style/checkBox_style" />
-        </TableRow>
-
-        <TableRow
-            android:layout_marginTop="@dimen/radio_row_margin"
-            android:layout_marginBottom="@dimen/radio_row_margin">
 
             <RadioButton
                 android:id="@+id/radioButton15min"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/check_box_height"
+                android:text="15 min"
                 android:textColor="#ffffff"
 
-                android:text="15 minutes"
                 android:textAppearance="@style/checkBox_style" />
 
             <RadioButton
                 android:id="@+id/radioButton30min"
-                android:textColor="#ffffff"
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/check_box_height"
-                android:text="30 minutes"
+                android:text="30 min"
+                android:textColor="#ffffff"
+
                 android:textAppearance="@style/checkBox_style" />
         </TableRow>
 
@@ -91,9 +101,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/check_box_height"
                 android:background="@null"
-                android:hint=" 20 "
                 android:textColor="#ffffff"
+
                 android:textColorHint="#ffffff"
+                android:hint=" 20 "
                 android:inputType="number"
                 android:textAppearance="@style/checkBox_style" />
 

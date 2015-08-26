@@ -167,7 +167,7 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
 
                 case SELECT_MUSIC:
                     selectedMusicUri = data.getData();
-                    if (selectedImageUri != null) {
+                    if (selectedMusicUri != null) {
                         loadMusicFromUri();
                     }
                     break;
@@ -175,8 +175,9 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
                 case SELECT_RECORD_SOUND:
                     selectedMusicUri = data.getData();
                     //btnAddVoice.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(R.drawable.musical_note), null, null);
-                    String titleRecord = "My Record";
-                    btnAddVoice.setText(titleRecord);
+                    if (selectedMusicUri != null) {
+                        loadMusicFromUri();
+                    }
                     break;
 
                 case SELECT_CONTACT:
@@ -201,23 +202,19 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
                     Utils.loadImageFromUri(getBaseContext(), selectedImageUri, photoHolder);
                     switch (drawAble_id) {
                         case R.drawable.celebs_obama:
-                            editTextCallerName.setText("Barack Obama");
+                            editTextCallerName.setText("USA President");
                             editTextCallerNumber.setText("201-925-0000");
                             break;
                         case R.drawable.celebs_kim:
-                            editTextCallerName.setText("Kim Kardashian");
+                            editTextCallerName.setText("Kim");
                             editTextCallerNumber.setText("201-546-6577");
                             break;
                         case R.drawable.celebs_bye:
-                            editTextCallerName.setText("Beyoncé");
+                            editTextCallerName.setText("beyonce");
                             editTextCallerNumber.setText("201-126-6657");
                             break;
-                        case R.drawable.celebs_minion:
-                            editTextCallerName.setText("My Yellow Mate");
-                            editTextCallerNumber.setText("001-556-9999");
-                            break;
                         case R.drawable.celebs_cat:
-                            editTextCallerName.setText("My Cat");
+                            editTextCallerName.setText("Kitty Cat");
                             editTextCallerNumber.setText("0000");
                             break;
                     }

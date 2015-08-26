@@ -145,6 +145,9 @@ public class Utils {
     public static int getTimeFromSpinner(int id, EditText editTextCustomTime, Spinner spinnerCustom, String TAG) {
         int timeForTrigger;
         switch (id){
+            case R.id.radioButton5sec:
+                timeForTrigger = 5 * SecFactor;
+                break;
             case R.id.radioButton10sec:
                 timeForTrigger = 10 * SecFactor;
                 break;

@@ -1,4 +1,4 @@
-package com.belmedia.fakecallsandsms;
+package com.belmedia.fakecallsandsms.sms;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -16,6 +16,7 @@ import android.provider.MediaStore;
 import android.provider.Telephony;
 import android.support.v4.app.NotificationCompat;
 
+import com.belmedia.fakecallsandsms.R;
 import com.belmedia.fakecallsandsms.activities.FakeSMS;
 
 import java.io.IOException;
@@ -29,6 +30,7 @@ public class SmsReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
+
         number = intent.getStringExtra(FakeSMS.KEY_CONTACT_NUMBER);
         bodyText = intent.getStringExtra(FakeSMS.KEY_BODY_SMS);
         thumbNail = intent.getStringExtra(FakeSMS.KEY_CONTACT_THUMBNAIL);
@@ -37,20 +39,39 @@ public class SmsReceiver extends BroadcastReceiver {
         ContentValues values = new ContentValues();
         values.put("address", number);
         values.put("body", bodyText);
-        context.getContentResolver().insert(Uri.parse("content://sms/inbox"), values);
-        context.getContentResolver().notifyChange(Uri.parse("content://sms/inbox"), null);
+        values.put("date", System.currentTimeMillis());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            context.getContentResolver().insert(Telephony.Sms.Inbox.CONTENT_URI, values);
+            context.getContentResolver().notifyChange(Telephony.Sms.Inbox.CONTENT_URI, null);
+        }
+        else {
+            context.getContentResolver().insert(Uri.parse("content://sms/inbox"), values);
+            context.getContentResolver().notifyChange(Uri.parse("content://sms/inbox"), null);
+        }
+        /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            //Change my sms app to the last default sms
+            Intent defaultSms = new Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT);
+            intent.putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, FakeSMS.defaultSmsApp);
+            context.getApplicationContext().startActivity(defaultSms);
+        }
+*/
         buildSmsNotification(context);
+
     }
 
     private void buildSmsNotification(Context context){
         Intent launchIntent;
         Uri uriSound= RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(context);
-            launchIntent = new Intent(Intent.ACTION_SEND);
-            launchIntent.setType("text/plain");
+            //String defaultSmsPackageName = Telephony.Sms.getDefaultSmsPackage(context);
+            String defaultSmsPackageName = FakeSMS.defaultSmsApp;
+
             if (defaultSmsPackageName != null) {
-                launchIntent.setPackage(defaultSmsPackageName);
+                launchIntent = context.getPackageManager().getLaunchIntentForPackage(defaultSmsPackageName);
+            } else {
+                String SMS_MIME_TYPE = "vnd.android-dir/mms-sms";
+                launchIntent = new Intent(Intent.ACTION_MAIN);
+                launchIntent.setType(SMS_MIME_TYPE);
             }
         } else {
             String SMS_MIME_TYPE = "vnd.android-dir/mms-sms";
@@ -58,7 +79,7 @@ public class SmsReceiver extends BroadcastReceiver {
             launchIntent.setType(SMS_MIME_TYPE);
         }
         Bitmap bitmap = null;
-        if (thumbNail.equals("") || thumbNail == null) {
+        if (thumbNail == null || thumbNail.equals("") ) {
             bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.celebs_unknown);
         } else {
             try {
