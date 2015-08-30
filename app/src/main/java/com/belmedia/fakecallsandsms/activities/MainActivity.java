@@ -42,6 +42,8 @@ public class MainActivity extends AppCompatActivity  implements AdEventListener 
                 }
             });
         }
+
+        //Utils.getSmsConversation(this);
         setContentView(R.layout.activity_main);
     }
 

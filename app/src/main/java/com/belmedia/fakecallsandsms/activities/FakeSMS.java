@@ -161,7 +161,8 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
                     final String myPackageName = getPackageName();
                     if (Telephony.Sms.getDefaultSmsPackage(this).equals(myPackageName)) {
                         callToSmsBroadcast();
-                    }*/
+                    }
+                    break;*/
             }
 
         }
@@ -170,12 +171,12 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
 
     public void triggerSmsSend(View view) {
        /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            boolean canWriteSms = false;
-
-            if(!SmsWriteOpUtil.isWriteEnabled(getApplicationContext())) {
-                canWriteSms = SmsWriteOpUtil.setWriteEnabled(getApplicationContext(), true);
-            }
-            Log.d("TAG", Boolean.toString(canWriteSms));
+//            boolean canWriteSms = false;
+//
+//            if(!SmsWriteOpUtil.isWriteEnabled(getApplicationContext())) {
+//                canWriteSms = SmsWriteOpUtil.setWriteEnabled(getApplicationContext(), true);
+//            }
+//            Log.d("TAG", Boolean.toString(canWriteSms));
             //Get default sms app
             defaultSmsApp = Telephony.Sms.getDefaultSmsPackage(this);
             final String myPackageName = getPackageName();
@@ -188,8 +189,8 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
             } else {
                 callToSmsBroadcast();
             }
-        } else
-            callToSmsBroadcast();*/
+        } else*/
+            //callToSmsBroadcast();
         callToSmsBroadcast();
 
     }

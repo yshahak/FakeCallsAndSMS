@@ -5,6 +5,8 @@
     <color name="gray">#20808080</color>
     <color name="contact_bkg">#7A44A38E</color>
     <color name="gray_line">#7a7a7a</color>
+    <color name="send_msg_bg">#ebebeb</color>
+    <color name="send_msg_cont_bg">#666d74</color>
 
 
 </resources>

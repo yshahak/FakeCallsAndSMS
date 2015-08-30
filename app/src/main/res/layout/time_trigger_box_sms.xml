@@ -102,7 +102,7 @@
                 android:layout_height="@dimen/check_box_height"
                 android:background="@null"
                 android:textColor="#ffffff"
-
+                android:layout_marginLeft="3dp"
                 android:textColorHint="#ffffff"
                 android:hint=" 20 "
                 android:inputType="number"

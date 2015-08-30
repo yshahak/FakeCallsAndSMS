@@ -9,6 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -228,4 +229,30 @@ public class Utils {
     }
 
 
+    public static void getSmsConversation(Activity context) {
+        Uri mSmsinboxQueryUri = Uri.parse("content://sms/inbox");
+        String[] projection = new String[] { "_id", "thread_id", "address", "person", "date","body", "type" };
+        Cursor cursor = context.getContentResolver().query(mSmsinboxQueryUri,null , null, null, null);
+        if (cursor == null)
+            return;
+        //context.startManagingCursor(cursor);
+        String[] columns = new String[] { "address", "person", "date", "body","type" };
+        if (cursor.moveToFirst()) {
+            int count = cursor.getCount();
+            String result;
+            String[] columnNames = cursor.getColumnNames();
+            while (cursor.moveToNext()){
+                for (String field : columnNames){
+                    result =  cursor.getString(cursor.getColumnIndex(field));
+                    if (result != null)
+                        Log.d("TAG", result);
+                }
+                /*String address = cursor.getString(cursor.getColumnIndex(columns[0]));
+                String name = cursor.getString(cursor.getColumnIndex(columns[1]));
+                String date = cursor.getString(cursor.getColumnIndex(columns[2]));
+                String msg = cursor.getString(cursor.getColumnIndex(columns[3]));
+                String type = cursor.getString(cursor.getColumnIndex(columns[4]));*/
+            }
+        }
+    }
 }
