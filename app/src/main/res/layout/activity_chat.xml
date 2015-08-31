@@ -2,16 +2,32 @@
     android:id="@+id/container"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
-    android:paddingLeft="20dp"
-    android:paddingRight="20dp">
+    android:background="@android:color/black"   >
 
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"/>
+        android:layout_gravity="center_horizontal"
+        android:background="@color/tb_bg">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/envelope"/>
+
+        <!-- Below will add your text in the center of toolbar -->
+        <TextView
+            android:id="@+id/sender"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="30dp"
+            android:text="Your Text"
+            android:textColor="@android:color/white"
+            android:textAppearance="?android:textAppearanceLarge"/>
+
+    </android.support.v7.widget.Toolbar>
 
 
     <RelativeLayout
@@ -25,12 +41,12 @@
 
         <ImageButton
             android:id="@+id/chatSendButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_send_black_48dp"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:background="@drawable/btn_bg_send"
+
             android:text="Send MSG"
-            android:layout_alignParentRight="true"
-            android:background="@color/send_msg_bg"/>
+            android:layout_alignParentRight="true"/>
 
         <EditText
             android:id="@+id/messageEdit"
@@ -57,7 +73,8 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/messageEditCont"
         android:layout_below="@+id/toolbar"
-
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
         android:layout_marginBottom="20dp" />
 
 

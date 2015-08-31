@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.belmedia.fakecallsandsms.R;
 import com.belmedia.fakecallsandsms.sms.ChatMessage;
@@ -40,13 +41,14 @@ public class ChatActivity extends ActionBarActivity {
         setContentView(R.layout.activity_chat);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar); // define the toolBar as the actionBar of that Activity
+        getSupportActionBar().setTitle(null);
 
         String body, sender, thumbNail;
         Intent intent = getIntent();
-        sender = intent.getStringExtra(FakeSMS.KEY_CONTACT_NUMBER);
+        sender = intent.getStringExtra(FakeSMS.KEY_CONTACT_NAME);
         body = intent.getStringExtra(FakeSMS.KEY_BODY_SMS);
         thumbNail = intent.getStringExtra(FakeSMS.KEY_CONTACT_THUMBNAIL);
-
+        ((TextView)toolbar.findViewById(R.id.sender)).setText(sender);
         initControls(sender, body, thumbNail);
     }
 
@@ -75,8 +77,6 @@ public class ChatActivity extends ActionBarActivity {
     }
 
     private void loadDummyHistory(String sender, String body, String thumbNail){
-        getSupportActionBar().setTitle(sender);
-
         chatHistory = new ArrayList<>();
         addMassage(body, thumbNail, false);
         adapter =  new SmsAdapter(this, chatHistory);
@@ -89,14 +89,18 @@ public class ChatActivity extends ActionBarActivity {
     }
 
     private void addMassage( String body, String thumbNail, boolean isMe){
-
         SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy E", Locale.US);
         SimpleDateFormat formatHour = new SimpleDateFormat("HH:mm", Locale.US);
 
         //DateFormat format = DateFormat.getDateTimeInstance();
         Date date = new Date();
-        ChatMessage msg = new ChatMessage(format.format(date), formatHour.format(date), body, thumbNail, isMe);
+        ChatMessage msg;
+        if (chatHistory.size() == 0)
+         msg = new ChatMessage(format.format(date), formatHour.format(date), body, thumbNail, isMe);
+        else
+            msg = new ChatMessage(null, formatHour.format(date), body, thumbNail, isMe);
         chatHistory.add(msg);
 
     }
+
 }

@@ -32,7 +32,9 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
     private final String TAG = getClass().getSimpleName();
     final int btnDpWidth = 100, btnDpwHeight = 100;
 
-    public static final String KEY_CONTACT_NAME = "contactNameSMS", KEY_CONTACT_NUMBER = "contactNumberSMS", KEY_CUSTOM = "extraCustomSMS", KEY_BODY_SMS = "bodySms", KEY_CONTACT_THUMBNAIL = "contactThumbnail";
+    public static final String KEY_CONTACT_NAME = "contactNameSMS", KEY_CONTACT_NUMBER = "contactNumberSMS"
+            , KEY_CUSTOM = "extraCustomSMS", KEY_BODY_SMS = "bodySms", KEY_CONTACT_THUMBNAIL = "contactThumbnail"
+            , KEY_LAST_TIME_CHOICE = "last_time_choice";
 
 
     @Bind(R.id.contact_picture_holder)
@@ -66,6 +68,7 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
         contactData.name = pref.getString(KEY_CONTACT_NAME, "");
         contactData.number = pref.getString(KEY_CONTACT_NUMBER, "");
         contactData.thumbnailUri = pref.getString(KEY_CONTACT_THUMBNAIL, "android.resource://" + getPackageName() + "/" + String.valueOf(R.drawable.celebs_unknown));
+        radioGroupTimePicker.setCheckedRadioButtonId(pref.getInt(KEY_LAST_TIME_CHOICE, R.id.radioButton5sec));
         Utils.loadImageFromUri(FakeSMS.this, Uri.parse(contactData.thumbnailUri), btnAddContact);
 
         editTextCallerName.setText(contactData.name);
@@ -107,6 +110,7 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
                 .putString(KEY_CONTACT_THUMBNAIL, contactData.thumbnailUri)
                 .putString(KEY_CUSTOM, editTextCustomTime.getText().toString())
                 .putString(KEY_BODY_SMS, editTextBodySms.getText().toString())
+                .putInt(KEY_LAST_TIME_CHOICE, radioGroupTimePicker.getCheckedRadioButtonId())
                 .apply();
     }
 
@@ -155,6 +159,7 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
                             btnAddContact.setImageResource(R.drawable.celebs_unknown);
                             btnAddContact.setBackgroundColor(getResources().getColor(R.color.gray));
                         }
+                        editTextBodySms.setText(" ");
                     }
                     break;
                 /*case 11:

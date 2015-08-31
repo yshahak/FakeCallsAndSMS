@@ -9,15 +9,12 @@
         android:orientation="horizontal">
 
 
-        <include layout="@layout/line"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"/>
+        <include layout="@layout/line"/>
 
         <TextView
             android:id="@+id/txtInfo"
             android:layout_width="wrap_content"
+            android:visibility="gone"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_margin="3dp"
@@ -26,11 +23,6 @@
             android:textSize="12sp"
             android:textColor="@android:color/darker_gray" />
 
-        <include layout="@layout/line"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_weight="1"
-            android:layout_gravity="center_vertical"/>
 
 
     </LinearLayout>
@@ -48,6 +40,8 @@
             android:id="@+id/contentWithBackground"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="100dp"
+
             android:layout_gravity="center_vertical"
             android:background="@drawable/in_message_bg"
             android:layout_margin="2dp"

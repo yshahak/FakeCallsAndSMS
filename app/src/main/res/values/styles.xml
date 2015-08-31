@@ -11,9 +11,9 @@
     </style>
 
     <!-- Main activity theme. -->
-    <style name="chatStyle" parent="@style/Theme.AppCompat.Light.DarkActionBar">
+    <style name="chatStyle" parent="AppTheme">
         <item name="actionBarStyle">@style/ActionBar</item>
-        <item name="colorPrimary">#334c61</item>
+        <item name="colorPrimary">@color/tb_bg</item>
 
     </style>
 

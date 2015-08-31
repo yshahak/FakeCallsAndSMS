@@ -34,7 +34,7 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.ViewHolder> impl
 
     private List<ChatMessage> chatMessages;
 
-
+    private static final int VIEW_TYPE_FIRST = 2;
     private static final int VIEW_TYPE_ME = 1;
     private static final int VIEW_TYPE_NOT_ME = 0;
 
@@ -64,6 +64,9 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.ViewHolder> impl
     public SmsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layoutId = -1;
         switch (viewType) {
+            case VIEW_TYPE_FIRST:
+                layoutId = R.layout.list_item_chat_message_first;
+                break;
             case VIEW_TYPE_ME: {
                 layoutId = R.layout.list_item_chat_message_right;
                 break;
@@ -83,6 +86,8 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.ViewHolder> impl
 
     @Override
     public int getItemViewType(int position) {
+        if (position == 0)
+            return VIEW_TYPE_FIRST;
         return chatMessages.get(position).getIsme() ? VIEW_TYPE_ME: VIEW_TYPE_NOT_ME;
     }
 
@@ -93,8 +98,8 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.ViewHolder> impl
         holder.txtMessage.setText(chatMessage.getMessage());
         holder.dateView.setText(chatMessage.getDate());
         holder.hourView.setText(chatMessage.getHourTime());
-
-        if (getItemViewType(position) == VIEW_TYPE_NOT_ME){
+        int viewType = getItemViewType(position);
+        if (viewType == VIEW_TYPE_NOT_ME || viewType == VIEW_TYPE_FIRST){
             holder.avatar.setVisibility(View.VISIBLE);
             Utils.loadImageFromUri(ctx, Uri.parse(chatMessage.getThumbnail()), holder.avatar);
         } else

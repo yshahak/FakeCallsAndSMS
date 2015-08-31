@@ -43,7 +43,9 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
 
     private static final int SELECT_PICTURE = 1, CROP_PIC_REQUEST_CODE = 2,
             SELECT_MUSIC = 3, SELECT_RECORD_SOUND = 4, SELECT_CONTACT = 5, SELECT_CELEB = 6;
-    public static final String KEY_IMAGE_URI = "imageUriCall", KEY_MUSIC_URI = "musicUriCall", KEY_CONTACT_NAME = "contactNameCall", KEY_CONTACT_NUMBER = "contactNumberCall", KEY_CUSTOM = "extraCustomCall";
+    public static final String KEY_IMAGE_URI = "imageUriCall", KEY_MUSIC_URI = "musicUriCall"
+            , KEY_CONTACT_NAME = "contactNameCall", KEY_CONTACT_NUMBER = "contactNumberCall"
+            , KEY_CUSTOM = "extraCustomCall", KEY_LAST_TIME_CHOICE = "last_time_choice";
     Uri selectedImageUri, selectedMusicUri;
     //ADDED
 
@@ -89,6 +91,7 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
             selectedImageUri = Uri.parse(savedImageUri);
             Utils.loadImageFromUri(FakeCall.this, selectedImageUri, photoHolder);
         }
+        radioGroupTimePicker.setCheckedRadioButtonId(pref.getInt(KEY_LAST_TIME_CHOICE, R.id.radioButton5sec));
         String savedMusicUri = pref.getString(KEY_MUSIC_URI, "");
         if (!"".equals(savedMusicUri)) {
             selectedMusicUri = Uri.parse(savedMusicUri);
@@ -128,6 +131,7 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
                 .putString(KEY_CUSTOM, editTextCustomTime.getText().toString())
                 .putString(KEY_IMAGE_URI, imageUri)
                 .putString(KEY_MUSIC_URI, musicUri)
+                .putInt(KEY_LAST_TIME_CHOICE, radioGroupTimePicker.getCheckedRadioButtonId())
                 .apply();
     }
 

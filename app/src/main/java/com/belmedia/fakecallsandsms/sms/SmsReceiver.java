@@ -24,7 +24,7 @@ import java.io.IOException;
  */
 public class SmsReceiver extends BroadcastReceiver {
 
-    String number,name,  bodyText, thumbNail;
+    String number, name, bodyText, thumbNail;
     public static final String SMS_EXTRA_NAME = "pdus";
     public static final String SMS_URI = "content://sms";
 
