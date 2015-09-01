@@ -44,11 +44,10 @@ public class ChatActivity extends ActionBarActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar); // define the toolBar as the actionBar of that Activity
         getSupportActionBar().setTitle(null);
-
         String body, sender, thumbNail;
         Intent intent = getIntent();
         number = intent.getStringExtra(FakeSMS.KEY_CONTACT_NUMBER);
-        Utils.checkNumberHistory(getApplication(), number, chatHistory);
+        Utils.getNumberHistory(getApplication(), number, chatHistory);
         sender = intent.getStringExtra(FakeSMS.KEY_CONTACT_NAME);
         body = intent.getStringExtra(FakeSMS.KEY_BODY_SMS);
         thumbNail = intent.getStringExtra(FakeSMS.KEY_CONTACT_THUMBNAIL);
@@ -107,7 +106,7 @@ public class ChatActivity extends ActionBarActivity {
             msg = new ChatMessage(number, format.format(calendar.getTime()), formatHour.format(calendar.getTime()), body, thumbNail, isMe);
         else {
             if (isMe){
-                msg = new ChatMessage(number, null, formatHour.format(calendar.getTime()), body, thumbNail, isMe);
+                msg = new ChatMessage(number, null, formatHour.format(calendar.getTime()), body, thumbNail, true);
             } else {
                 String valid_until = Utils.getLastDate(chatHistory);
                 Calendar strCalendar = null;
@@ -122,9 +121,9 @@ public class ChatActivity extends ActionBarActivity {
                     }
                 }
                 if (strCalendar != null && calendar.get(Calendar.DAY_OF_YEAR) >  strCalendar.get(Calendar.DAY_OF_YEAR))
-                    msg = new ChatMessage(number, format.format(calendar.getTime()), formatHour.format(calendar.getTime()), body, thumbNail, isMe);
+                    msg = new ChatMessage(number, format.format(calendar.getTime()), formatHour.format(calendar.getTime()), body, thumbNail, false);
                 else
-                    msg = new ChatMessage(number, null, formatHour.format(calendar.getTime()), body, thumbNail, isMe);
+                    msg = new ChatMessage(number, null, formatHour.format(calendar.getTime()), body, thumbNail, false);
             }
         }
         chatHistory.add(msg);

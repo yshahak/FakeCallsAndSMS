@@ -302,14 +302,20 @@ public class Utils {
                         SharedPreferences.Editor edit = PreferenceManager.getDefaultSharedPreferences(app).edit();
                         int count = 0;
                         String number = "0";
+                        Log.d("TAG", "save");
                         for (ChatMessage chatMessage : list){
                             if (count == 0)
                                 number = chatMessage.getSenderNumber();
+                            Log.d("TAG", Boolean.toString(chatMessage.getIsme()));
+                            Log.d("TAG", chatMessage.getMessage());
                             Gson gson = new GsonBuilder().create();
                             String array = gson.toJson(chatMessage);
-                            edit.putString(number, array);
+                            edit.putString(number + Integer.toString(count), array);
                             count++;
                         }
+                        Gson gson = new GsonBuilder().create();
+                        String array = gson.toJson(list);
+                        edit.putString(number, array);
                         edit.putInt(number + "size", count).apply();
                     } catch (ConcurrentModificationException e){
                         ExceptionHandler.handleException(e);
@@ -319,19 +325,19 @@ public class Utils {
         }).start();
     }
 
-    public static void checkNumberHistory(Application application, String number, ArrayList<ChatMessage> chatHistory) {
+    public static void getNumberHistory(Application application, String number, ArrayList<ChatMessage> chatHistory) {
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(application);
-        String array = pref.getString(number, "null");
-        if (array.equals("null"))
-            return;
         int size = pref.getInt(number + "size", 0);
         if (size == 0)
             return;
+        Log.d("TAG", "load");
         for (int i = 0 ; i < size; i++) {
             Gson gson = new Gson();
-            Type type = new TypeToken<ChatMessage>() {
-            }.getType();
+            Type type = new TypeToken<ChatMessage>() {}.getType();
+            String array = pref.getString(number + Integer.toString(i), "null");
             ChatMessage message = gson.fromJson(array, type);
+            Log.d("TAG", Boolean.toString(message.getIsme()));
+            Log.d("TAG", message.getMessage());
             chatHistory.add(message);
         }
     }
