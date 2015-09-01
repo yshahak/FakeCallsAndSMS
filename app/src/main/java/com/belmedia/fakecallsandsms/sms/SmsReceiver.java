@@ -6,18 +6,17 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.provider.MediaStore;
+import android.os.Build;
 import android.support.v4.app.NotificationCompat;
 
 import com.belmedia.fakecallsandsms.R;
+import com.belmedia.fakecallsandsms.Utils;
 import com.belmedia.fakecallsandsms.activities.ChatActivity;
 import com.belmedia.fakecallsandsms.activities.FakeSMS;
-
-import java.io.IOException;
 
 /**
  * Created by B.E.L on 09/07/2015.
@@ -117,16 +116,28 @@ public class SmsReceiver extends BroadcastReceiver {
             launchIntent = new Intent(Intent.ACTION_MAIN);
             launchIntent.setType(SMS_MIME_TYPE);
         }*/
-        Bitmap bitmap = null;
-        if (thumbNail == null || thumbNail.equals("") ) {
-            bitmap = BitmapFactory.decodeResource(context.getResources(), R.drawable.celebs_unknown);
+        int height, width;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            Resources res = context.getResources();
+            height = (int) res.getDimension(android.R.dimen.notification_large_icon_height);
+            width = (int) res.getDimension(android.R.dimen.notification_large_icon_width);
         } else {
-            try {
+            height = Utils.getDpInPixels(48, context);
+            width = height;
+        }
+        Bitmap bitmap;
+        if (thumbNail == null || thumbNail.equals("") ) {
+            bitmap = Utils.decodeSampledBitmapFromResource(context.getResources(), R.drawable.celebs_unknown, width, height);
+        } else {
+            bitmap = Utils.getBitmapFromUri(Uri.parse(thumbNail), context.getApplicationContext(), width, height);
+           /* try {
                 bitmap = MediaStore.Images.Media.getBitmap(context.getContentResolver(), Uri.parse(thumbNail));
+
             } catch (IOException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
+
         NotificationCompat.Builder mBuilder = new NotificationCompat.Builder(context);
         if (bitmap != null) {
             mBuilder.setContentTitle(name)
@@ -144,7 +155,7 @@ public class SmsReceiver extends BroadcastReceiver {
                     .setPriority(Notification.PRIORITY_HIGH)
                     .setSound(uriSound);
         }
-        PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, intent, 0);
+        PendingIntent resultPendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         mBuilder.setContentIntent(resultPendingIntent);
         ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).notify(1, mBuilder.build());
     }

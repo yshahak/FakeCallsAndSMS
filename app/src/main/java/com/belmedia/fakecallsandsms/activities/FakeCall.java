@@ -22,6 +22,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -89,7 +90,7 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
         String savedImageUri = pref.getString(KEY_IMAGE_URI, "");
         if (!"".equals(savedImageUri)) {
             selectedImageUri = Uri.parse(savedImageUri);
-            Utils.loadImageFromUri(FakeCall.this, selectedImageUri, photoHolder);
+            photoHolder.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
         }
         radioGroupTimePicker.setCheckedRadioButtonId(pref.getInt(KEY_LAST_TIME_CHOICE, R.id.radioButton5sec));
         String savedMusicUri = pref.getString(KEY_MUSIC_URI, "");
@@ -114,6 +115,14 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
 
 
     }
+
+    private ViewTreeObserver.OnGlobalLayoutListener layoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            Utils.loadImageFromUri(FakeCall.this, selectedImageUri, photoHolder);
+            photoHolder.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+        }
+    };
 
 
     @Override
@@ -287,16 +296,11 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
                         removeMusicFromUri();
                     }
                 })
-                .setNegativeButton("Record new voice", new DialogInterface.OnClickListener() {
+                .setNegativeButton("Select from library", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
-                                try {
-                                    startActivityForResult(intent, SELECT_RECORD_SOUND);
-                                } catch (ActivityNotFoundException e) {
-                                    ExceptionHandler.handleException(e);
-                                    Toast.makeText(getBaseContext(), "Your device miss built in recorder", Toast.LENGTH_LONG).show();
-                                }
+                                Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
+                                startActivityForResult(i, SELECT_MUSIC);
                             }
                         }
 

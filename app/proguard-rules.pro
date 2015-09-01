@@ -22,6 +22,7 @@
 -keepattributes Exceptions, InnerClasses, Signature, Deprecated, SourceFile, LineNumberTable, *Annotation*, EnclosingMethod
 -dontwarn android.webkit.JavascriptInterface
 -dontwarn com.startapp.**
+-dontwarn com.revmob.**
 
 -keep class com.flurry.** { *; }
 -dontwarn com.flurry.**

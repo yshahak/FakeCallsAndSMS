@@ -37,7 +37,9 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".activities.IncomeCallActivity"
+        <activity
+            android:name=".activities.IncomeCallActivity"
+            android:launchMode="singleTop"
             android:configChanges="orientation"/>
 
         <activity
@@ -45,6 +47,7 @@
             android:label="@string/title_activity_incoming_activity_settings"
             android:windowSoftInputMode="stateHidden" >
         </activity>
+
         <activity
             android:launchMode="singleTop"
             android:name=".activities.FakeSMS"
@@ -128,6 +131,10 @@
             android:process=":installationTracker">
         </receiver>
 
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="d27f707590e9efaf1a0d6cf0f67647dbf296b06f" />
 
     </application>
 

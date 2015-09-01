@@ -15,11 +15,14 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.belmedia.fakecallsandsms.R;
+import com.belmedia.fakecallsandsms.Utils;
 import com.belmedia.fakecallsandsms.sms.ChatMessage;
 import com.belmedia.fakecallsandsms.sms.SmsAdapter;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
@@ -30,10 +33,9 @@ public class ChatActivity extends ActionBarActivity {
 
     private EditText messageET;
     private RecyclerView messagesContainer;
-    private ImageButton sendBtn;
-    //private ChatAdapter adapter;
-    private ArrayList<ChatMessage> chatHistory;
+    private ArrayList<ChatMessage> chatHistory = new ArrayList<>();
     private SmsAdapter adapter;
+    private String number;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,18 +47,28 @@ public class ChatActivity extends ActionBarActivity {
 
         String body, sender, thumbNail;
         Intent intent = getIntent();
+        number = intent.getStringExtra(FakeSMS.KEY_CONTACT_NUMBER);
+        Utils.checkNumberHistory(getApplication(), number, chatHistory);
         sender = intent.getStringExtra(FakeSMS.KEY_CONTACT_NAME);
         body = intent.getStringExtra(FakeSMS.KEY_BODY_SMS);
         thumbNail = intent.getStringExtra(FakeSMS.KEY_CONTACT_THUMBNAIL);
         ((TextView)toolbar.findViewById(R.id.sender)).setText(sender);
         initControls(sender, body, thumbNail);
+
+    }
+
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Utils.save(getApplication(), chatHistory);
     }
 
     private void initControls(String sender, String body, String thumbNail) {
         messagesContainer = (RecyclerView) findViewById(R.id.messagesContainer);
         messageET = (EditText) findViewById(R.id.messageEdit);
-        sendBtn = (ImageButton) findViewById(R.id.chatSendButton);
-        loadDummyHistory(sender, body, thumbNail);
+        ImageButton sendBtn = (ImageButton) findViewById(R.id.chatSendButton);
+        loadDummyHistory(body, thumbNail);
 
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -76,29 +88,45 @@ public class ChatActivity extends ActionBarActivity {
         });
     }
 
-    private void loadDummyHistory(String sender, String body, String thumbNail){
-        chatHistory = new ArrayList<>();
+    private void loadDummyHistory(String body, String thumbNail){
         addMassage(body, thumbNail, false);
         adapter =  new SmsAdapter(this, chatHistory);
         messagesContainer.setHasFixedSize(true);
         messagesContainer.setLayoutManager(new LinearLayoutManager(this));
-        //messagesContainer.addItemDecoration(new SimpleDividerItemDecoration(getResources()));
-
         messagesContainer.setAdapter(adapter);
 
     }
 
-    private void addMassage( String body, String thumbNail, boolean isMe){
-        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy E", Locale.US);
-        SimpleDateFormat formatHour = new SimpleDateFormat("HH:mm", Locale.US);
 
-        //DateFormat format = DateFormat.getDateTimeInstance();
-        Date date = new Date();
+    private void addMassage(String body, String thumbNail, boolean isMe){
+        SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+        SimpleDateFormat formatHour = new SimpleDateFormat("HH:mm", Locale.US);
+        Calendar calendar = Calendar.getInstance();
         ChatMessage msg;
         if (chatHistory.size() == 0)
-         msg = new ChatMessage(format.format(date), formatHour.format(date), body, thumbNail, isMe);
-        else
-            msg = new ChatMessage(null, formatHour.format(date), body, thumbNail, isMe);
+            msg = new ChatMessage(number, format.format(calendar.getTime()), formatHour.format(calendar.getTime()), body, thumbNail, isMe);
+        else {
+            if (isMe){
+                msg = new ChatMessage(number, null, formatHour.format(calendar.getTime()), body, thumbNail, isMe);
+            } else {
+                String valid_until = Utils.getLastDate(chatHistory);
+                Calendar strCalendar = null;
+                if (valid_until != null) {
+                    Date strDate;
+                    strCalendar = Calendar.getInstance();
+                    try {
+                        strDate = format.parse(valid_until);
+                        strCalendar.setTime(strDate);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                }
+                if (strCalendar != null && calendar.get(Calendar.DAY_OF_YEAR) >  strCalendar.get(Calendar.DAY_OF_YEAR))
+                    msg = new ChatMessage(number, format.format(calendar.getTime()), formatHour.format(calendar.getTime()), body, thumbNail, isMe);
+                else
+                    msg = new ChatMessage(number, null, formatHour.format(calendar.getTime()), body, thumbNail, isMe);
+            }
+        }
         chatHistory.add(msg);
 
     }

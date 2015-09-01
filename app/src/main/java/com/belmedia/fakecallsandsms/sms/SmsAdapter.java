@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -34,7 +35,6 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.ViewHolder> impl
 
     private List<ChatMessage> chatMessages;
 
-    private static final int VIEW_TYPE_FIRST = 2;
     private static final int VIEW_TYPE_ME = 1;
     private static final int VIEW_TYPE_NOT_ME = 0;
 
@@ -64,9 +64,6 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.ViewHolder> impl
     public SmsAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layoutId = -1;
         switch (viewType) {
-            case VIEW_TYPE_FIRST:
-                layoutId = R.layout.list_item_chat_message_first;
-                break;
             case VIEW_TYPE_ME: {
                 layoutId = R.layout.list_item_chat_message_right;
                 break;
@@ -86,25 +83,41 @@ public class SmsAdapter extends RecyclerView.Adapter<SmsAdapter.ViewHolder> impl
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0)
-            return VIEW_TYPE_FIRST;
         return chatMessages.get(position).getIsme() ? VIEW_TYPE_ME: VIEW_TYPE_NOT_ME;
     }
 
     // Replace the contents of a view (invoked by the layout manager)
     @Override
-    public void onBindViewHolder(ViewHolder holder, int position) {
-        ChatMessage chatMessage = chatMessages.get(position);
+    public void onBindViewHolder(final ViewHolder holder, int position) {
+        final ChatMessage chatMessage = chatMessages.get(position);
         holder.txtMessage.setText(chatMessage.getMessage());
-        holder.dateView.setText(chatMessage.getDate());
+        String date = chatMessage.getDate();
+        if (date == null)
+            holder.dateView.setVisibility(View.GONE);
+        else{
+            holder.dateView.setVisibility(View.VISIBLE);
+            holder.dateView.setText(date);
+        }
         holder.hourView.setText(chatMessage.getHourTime());
         int viewType = getItemViewType(position);
-        if (viewType == VIEW_TYPE_NOT_ME || viewType == VIEW_TYPE_FIRST){
+        if (viewType == VIEW_TYPE_NOT_ME){
             holder.avatar.setVisibility(View.VISIBLE);
-            Utils.loadImageFromUri(ctx, Uri.parse(chatMessage.getThumbnail()), holder.avatar);
+            if (holder.avatar.getWidth() != 0){
+                Utils.loadImageFromUri(ctx, Uri.parse(chatMessage.getThumbnail()), holder.avatar);
+            } else {
+                holder.avatar.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                    @Override
+                    public void onGlobalLayout() {
+                        Utils.loadImageFromUri(ctx, Uri.parse(chatMessage.getThumbnail()), holder.avatar);
+                        holder.avatar.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    }
+                });
+            }
         } else
             holder.avatar.setVisibility(View.GONE);
     }
+
+
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override

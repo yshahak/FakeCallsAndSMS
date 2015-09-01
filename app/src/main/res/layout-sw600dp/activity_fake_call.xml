@@ -103,98 +103,103 @@
         android:background="@color/gray_line"
         android:layout_marginTop="5dp"   />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="3"
-        android:orientation="vertical">
+    <include layout="@layout/time_trigger_box_call" />
 
-        <TextView
-            android:layout_width="wrap_content"
+
+    <!--
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="Make the call in:"
-            android:textColor="@android:color/white"
-            android:textStyle="bold"
-            android:textAppearance="@android:style/TextAppearance.Large" />
+            android:layout_weight="3"
+            android:orientation="vertical">
 
-        <com.belmedia.fakecallsandsms.ToggleButtonGroupTableLayout
-            android:id="@+id/radio_group_time_picker"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:text="Make the call in:"
+                android:textColor="@android:color/white"
+                android:textStyle="bold"
+                android:textAppearance="@android:style/TextAppearance.Large" />
 
-            <TableRow>
+            <com.belmedia.fakecallsandsms.ToggleButtonGroupTableLayout
+                android:id="@+id/radio_group_time_picker"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal">
 
-                <RadioButton
-                    android:id="@+id/radioButton10sec"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/check_box_height"
-                    android:checked="true"
-                    android:text="10 sec"
-                    android:textAppearance="@style/checkBox_style" />
+                <TableRow>
 
-                <RadioButton
-                    android:id="@+id/radioButton30sec"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/check_box_height"
-                    android:text="30 sec"
-                    android:textAppearance="@style/checkBox_style" />
+                    <RadioButton
+                        android:id="@+id/radioButton10sec"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/check_box_height"
+                        android:checked="true"
+                        android:text="10 sec"
+                        android:textAppearance="@style/checkBox_style" />
 
-                <RadioButton
-                    android:id="@+id/radioButton5min"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/check_box_height"
-                    android:text="5 minutes"
-                    android:textAppearance="@style/checkBox_style" />
-            </TableRow>
+                    <RadioButton
+                        android:id="@+id/radioButton30sec"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/check_box_height"
+                        android:text="30 sec"
+                        android:textAppearance="@style/checkBox_style" />
 
-            <TableRow>
+                    <RadioButton
+                        android:id="@+id/radioButton5min"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/check_box_height"
+                        android:text="5 minutes"
+                        android:textAppearance="@style/checkBox_style" />
+                </TableRow>
 
-                <RadioButton
-                    android:id="@+id/radioButton15min"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/check_box_height"
-                    android:text="15 minutes"
-                    android:textAppearance="@style/checkBox_style"/>
+                <TableRow>
 
-                <RadioButton
-                    android:id="@+id/radioButtonCustom"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/check_box_height"
-                    android:text="custom"
-                    android:textAppearance="@style/checkBox_style"/>
-            </TableRow>
+                    <RadioButton
+                        android:id="@+id/radioButton15min"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/check_box_height"
+                        android:text="15 minutes"
+                        android:textAppearance="@style/checkBox_style"/>
 
-            <TableRow>
+                    <RadioButton
+                        android:id="@+id/radioButtonCustom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/check_box_height"
+                        android:text="custom"
+                        android:textAppearance="@style/checkBox_style"/>
+                </TableRow>
 
-                <RadioButton
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/check_box_height"
-                    android:text="Custom"
-                    android:textAppearance="@style/checkBox_style" />
+                <TableRow>
 
-                <EditText
-                    android:id="@+id/editText_custom_time"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/check_box_height"
-                    android:background="@null"
-                    android:hint=" 20 "
-                    android:inputType="number"
-                    android:textAppearance="@style/checkBox_style" />
+                    <RadioButton
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/check_box_height"
+                        android:text="Custom"
+                        android:textAppearance="@style/checkBox_style" />
 
-                <Spinner
-                    android:id="@+id/spinner_custom"
-                    android:layout_width="wrap_content"
-                    android:layout_height="@dimen/check_box_height"
-                    android:cursorVisible="false"
-                    android:entries="@array/spinner_choices"  />
+                    <EditText
+                        android:id="@+id/editText_custom_time"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/check_box_height"
+                        android:background="@null"
+                        android:hint=" 20 "
+                        android:inputType="number"
+                        android:textAppearance="@style/checkBox_style" />
 
-            </TableRow>
+                    <Spinner
+                        android:id="@+id/spinner_custom"
+                        android:layout_width="wrap_content"
+                        android:layout_height="@dimen/check_box_height"
+                        android:cursorVisible="false"
+                        android:entries="@array/spinner_choices"  />
 
-        </com.belmedia.fakecallsandsms.ToggleButtonGroupTableLayout>
+                </TableRow>
 
-    </LinearLayout>
+            </com.belmedia.fakecallsandsms.ToggleButtonGroupTableLayout>
+
+        </LinearLayout>
+    -->
 
 
 

@@ -4,6 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
+    android:gravity="center_vertical|left"
     tools:showIn="@layout/activity_fake_call">
 
     <TextView
@@ -18,8 +19,7 @@
     <com.belmedia.fakecallsandsms.ToggleButtonGroupTableLayout
         android:id="@+id/radio_group_time_picker"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal">
+        android:layout_height="wrap_content">
 
         <TableRow>
 
@@ -100,9 +100,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="@dimen/check_box_height"
                 android:background="@null"
+                android:gravity="center"
                 android:textColor="#ffffff"
-                android:layout_marginLeft="3dp"
-                android:textColorHint="#ffffff"
                 android:hint=" 20 "
                 android:inputType="number"
                 android:textAppearance="@style/checkBox_style" />

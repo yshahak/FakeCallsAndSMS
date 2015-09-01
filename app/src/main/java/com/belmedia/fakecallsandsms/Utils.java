@@ -1,12 +1,20 @@
 package com.belmedia.fakecallsandsms;
 
 import android.app.Activity;
+import android.app.Application;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.database.Cursor;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -14,7 +22,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
 
+import com.belmedia.fakecallsandsms.sms.ChatMessage;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.reflect.TypeToken;
 import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 
 /**
  * Created by B.E.L on 06/07/2015.
@@ -24,7 +42,7 @@ public class Utils {
     final static int SecFactor = 1000, MinFactor = 1000*60;
     public final static String KEY_NAME = "name", KEY_NUMBER = "number", KEY_THUMBNAIL = "thumbnail";
 
-  /*  public static Bitmap getBitmapFromUri(Uri selectedImageUri, Context context, int width, int height){
+    public static Bitmap getBitmapFromUri(Uri selectedImageUri, Context context, int width, int height){
         Bitmap bm = null;
         try {
             InputStream inputStream;
@@ -43,6 +61,21 @@ public class Utils {
             e.printStackTrace();
         }
         return bm;
+    }
+
+    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId, int reqWidth, int reqHeight){
+        Bitmap bm = null;
+        // First decode with inJustDecodeBounds=true to check dimensions
+        final BitmapFactory.Options options = new BitmapFactory.Options();
+        options.inJustDecodeBounds = true;
+        BitmapFactory.decodeResource(res, resId, options);
+
+        // Calculate inSampleSize
+        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
+
+        // Decode bitmap with inSampleSize set
+        options.inJustDecodeBounds = false;
+        return BitmapFactory.decodeResource(res, resId, options);
     }
 
     public static Bitmap getBitmapFromBitmap(Bitmap bm, int newWidth, int newHeight){
@@ -79,7 +112,6 @@ public class Utils {
 
         return inSampleSize;
     }
-*/
 
     public static int getDpInPixels(int dpValue, Context ctx) {
         if (ctx != null) {
@@ -125,10 +157,11 @@ public class Utils {
 
     @SuppressWarnings("deprecation")
     public static void loadImageFromUri(@NonNull final Context context,@NonNull final Uri selectedImageUri,@NonNull final ImageView btn) {
-        //int width = btn.getWidth(), height = btn.getHeight();
+        int width = btn.getWidth(), height = btn.getHeight();
         Picasso.with(context)
                 .load(selectedImageUri)
-                .fit()
+                .resize(width, height)
+                .centerCrop()
                 .into(btn);
     }
 
@@ -254,5 +287,62 @@ public class Utils {
                 String type = cursor.getString(cursor.getColumnIndex(columns[4]));*/
             }
         }
+    }
+
+    /**
+     * @param app app context
+     * @param list array to save
+     */
+    public static void save(final Application app, final ArrayList<ChatMessage> list){
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (list != null) {
+                    try {
+                        SharedPreferences.Editor edit = PreferenceManager.getDefaultSharedPreferences(app).edit();
+                        int count = 0;
+                        String number = "0";
+                        for (ChatMessage chatMessage : list){
+                            if (count == 0)
+                                number = chatMessage.getSenderNumber();
+                            Gson gson = new GsonBuilder().create();
+                            String array = gson.toJson(chatMessage);
+                            edit.putString(number, array);
+                            count++;
+                        }
+                        edit.putInt(number + "size", count).apply();
+                    } catch (ConcurrentModificationException e){
+                        ExceptionHandler.handleException(e);
+                    }
+                }
+            }
+        }).start();
+    }
+
+    public static void checkNumberHistory(Application application, String number, ArrayList<ChatMessage> chatHistory) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(application);
+        String array = pref.getString(number, "null");
+        if (array.equals("null"))
+            return;
+        int size = pref.getInt(number + "size", 0);
+        if (size == 0)
+            return;
+        for (int i = 0 ; i < size; i++) {
+            Gson gson = new Gson();
+            Type type = new TypeToken<ChatMessage>() {
+            }.getType();
+            ChatMessage message = gson.fromJson(array, type);
+            chatHistory.add(message);
+        }
+    }
+
+    public static String getLastDate(ArrayList<ChatMessage> chatHistory) {
+        String date;
+        for (int i = chatHistory.size() - 1; i >= 0 ; i--){
+            date = chatHistory.get(i).getDate();
+            if (date != null)
+                return date;
+        }
+        return null;
     }
 }

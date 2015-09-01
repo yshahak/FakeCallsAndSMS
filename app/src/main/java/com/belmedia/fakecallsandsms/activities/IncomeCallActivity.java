@@ -15,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -42,11 +43,12 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
 
 
 
-    final int contactDPsize = 300, imageBtnMargin = 50;
+    final int imageBtnMargin = 50;
     int screenWidth;
     MediaPlayer mp;
     private Uri imageUri;
 
+    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +65,7 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
         imageUri = getIntent().getParcelableExtra(FakeCall.KEY_IMAGE_URI);
         screenWidth =  getWindowManager().getDefaultDisplay().getWidth();
         if (imageUri != null){
-            Utils.loadImageFromUri(IncomeCallActivity.this, imageUri, imageContact);
+            imageContact.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
         }
 
         String contactName = getIntent().getStringExtra(FakeCall.KEY_CONTACT_NAME);
@@ -78,6 +80,15 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
         mp.start();
 
     }
+
+    @SuppressWarnings("deprecation")
+    private ViewTreeObserver.OnGlobalLayoutListener layoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            Utils.loadImageFromUri(IncomeCallActivity.this, imageUri, imageContact);
+            imageContact.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+        }
+    };
 
 
     @Override
@@ -121,8 +132,14 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
     }
 
 
+    @SuppressWarnings("deprecation")
     public void endCall(int delayToFinish) {
-        mp.stop();
+        try {
+            if (mp.isPlaying())
+                mp.stop();
+        } catch (IllegalStateException e){
+            e.printStackTrace();
+        }
         mp.release();
         containerContactTexts.setBackgroundColor(getResources().getColor(R.color.red));
         textIncomeCall.setText(getString(R.string.end_call));

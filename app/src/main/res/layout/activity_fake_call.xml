@@ -10,10 +10,10 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="3"
+        android:layout_height="80dp"
         android:layout_gravity="center_horizontal"
-        android:orientation="horizontal"   >
+        android:orientation="horizontal"
+        android:layout_weight="1">
 
 
         <ImageView
@@ -46,17 +46,16 @@
     <include layout="@layout/contact_cell_call"
         android:layout_width="wrap_content"
         android:layout_gravity="center_horizontal"
-
-        android:layout_height="wrap_content"
-        android:layout_weight="9"/>
+        android:layout_height="wrap_content"/>
 
     <include layout="@layout/line" />
 
     <LinearLayout
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_weight="4"
+        android:layout_height="50dp"
         android:layout_gravity="center"
+        android:layout_weight="1"
+
         android:orientation="horizontal">
 
         <TextView
@@ -81,6 +80,7 @@
             android:id="@+id/button_add_voice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+
             android:layout_gravity="center"
             android:background="@drawable/call_add_voice_btn"
             android:gravity="center"
@@ -92,7 +92,10 @@
     <include layout="@layout/line" />
 
 
-    <include layout="@layout/time_trigger_box_call" />
+    <include layout="@layout/time_trigger_box_call"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
 
 
     <include layout="@layout/line" />
@@ -100,7 +103,9 @@
     <ImageView
         android:id="@+id/button_call"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_weight="1"
+
+        android:layout_height="50dp"
         android:layout_gravity="center"
         android:src="@drawable/call_call_btn"
         android:onClick="triggerCallAlarm"/>

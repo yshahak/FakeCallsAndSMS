@@ -14,6 +14,7 @@ import android.text.TextWatcher;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
@@ -69,7 +70,8 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
         contactData.number = pref.getString(KEY_CONTACT_NUMBER, "");
         contactData.thumbnailUri = pref.getString(KEY_CONTACT_THUMBNAIL, "android.resource://" + getPackageName() + "/" + String.valueOf(R.drawable.celebs_unknown));
         radioGroupTimePicker.setCheckedRadioButtonId(pref.getInt(KEY_LAST_TIME_CHOICE, R.id.radioButton5sec));
-        Utils.loadImageFromUri(FakeSMS.this, Uri.parse(contactData.thumbnailUri), btnAddContact);
+        btnAddContact.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
+
 
         editTextCallerName.setText(contactData.name);
         if (!contactData.number.equals(""))
@@ -94,19 +96,20 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
 
     }
 
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-    }
+    private ViewTreeObserver.OnGlobalLayoutListener layoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            Utils.loadImageFromUri(FakeSMS.this, Uri.parse(contactData.thumbnailUri), btnAddContact);
+            btnAddContact.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+        }
+    };
 
     @Override
     protected void onStop() {
         super.onStop();
         SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        pref.edit().putString(KEY_CONTACT_NAME, contactData.name)
-                .putString(KEY_CONTACT_NUMBER, contactData.number)
+        pref.edit().putString(KEY_CONTACT_NAME, editTextCallerName.getText().toString())
+                .putString(KEY_CONTACT_NUMBER, editTextCallerNumber.getText().toString())
                 .putString(KEY_CONTACT_THUMBNAIL, contactData.thumbnailUri)
                 .putString(KEY_CUSTOM, editTextCustomTime.getText().toString())
                 .putString(KEY_BODY_SMS, editTextBodySms.getText().toString())
@@ -204,12 +207,12 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
         int id = radioGroupTimePicker.getCheckedRadioButtonId();
         int timeForTrigger = Utils.getTimeFromSpinner(id, editTextCustomTime, spinnerCustom, TAG);
         Intent smsBroadcastIntent = new Intent(this, SmsReceiver.class);
-        smsBroadcastIntent.putExtra(KEY_CONTACT_NAME, contactData.name);
-        smsBroadcastIntent.putExtra(KEY_CONTACT_NUMBER, contactData.number);
+        smsBroadcastIntent.putExtra(KEY_CONTACT_NAME, editTextCallerName.getText().toString());
+        smsBroadcastIntent.putExtra(KEY_CONTACT_NUMBER, editTextCallerNumber.getText().toString());
         smsBroadcastIntent.putExtra(KEY_CONTACT_THUMBNAIL, contactData.thumbnailUri);
         smsBroadcastIntent.putExtra(KEY_BODY_SMS, editTextBodySms.getText().toString());
 
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, smsBroadcastIntent, 0);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 0, smsBroadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeForTrigger, pendingIntent);
 
