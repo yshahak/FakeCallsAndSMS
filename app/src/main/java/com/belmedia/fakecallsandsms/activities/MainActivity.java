@@ -19,8 +19,8 @@ import com.startapp.android.publish.StartAppSDK;
 
 public class MainActivity extends AppCompatActivity  implements AdEventListener {
 
-    private final String StartApp_id = "207671893";
-    private final String MOBILE_CORE_TAG = "7HI5CZPBF7JTFSGYZDZOZPKDEL9VF";
+    private final String StartApp_id = "207720152";
+    private final String MOBILE_CORE_TAG = "7HI5CZPBF7JBBSG0ZDZOZPKDEL9VF";
 
     private StartAppAd startAppAd = new StartAppAd(this);
 

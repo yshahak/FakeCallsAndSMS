@@ -14,7 +14,7 @@ public class MyApplication extends Application {
     //Tracker tracker;
     String TAG = getClass().getSimpleName();
 
-    private final String Flurry_id = "Q5VFZ6MTVW92PJQ7QR63";
+    private final String Flurry_id = "4Q49G8PJHXTK5F7C4HFM";
 
 
 

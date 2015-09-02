@@ -7,6 +7,8 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Vibrator;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.annotation.NonNull;
@@ -42,11 +44,13 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
     @Bind(R.id.text_view_number) TextView textViewContactNumber;
 
 
-
+    Handler handler;
     final int imageBtnMargin = 50;
     int screenWidth;
     MediaPlayer mp;
     private Uri imageUri;
+    int RINGER_POSITION;
+    private Vibrator vibrator;
 
     @SuppressWarnings("deprecation")
     @Override
@@ -55,9 +59,16 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.activity_incoming_call);
         ButterKnife.bind(this);
+        handler = new Handler();
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
-
-
+        mp = MediaPlayer.create(this, Settings.System.DEFAULT_RINGTONE_URI);
+        if (((AudioManager)getSystemService(Context.AUDIO_SERVICE)).getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
+            mp.setLooping(true);
+            mp.start();
+        }
+        if (Utils.checkVibreationIsOn(this)) //vibrate on
+            handler.post(viberation);
         IconListener iconListener = new IconListener();
         imageCall.setOnTouchListener(iconListener);
         imageEnd.setOnTouchListener(iconListener);
@@ -75,11 +86,17 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
         String contactNumber = getIntent().getStringExtra(FakeCall.KEY_CONTACT_NUMBER);
         if (contactNumber != null)
             textViewContactNumber.setText(contactNumber);
-        mp = MediaPlayer.create(this, Settings.System.DEFAULT_RINGTONE_URI);
-        mp.setLooping(true);
-        mp.start();
-
     }
+
+    Runnable viberation = new Runnable() {
+        long[] pattern = { 0, 1000, 1000 };
+
+        @Override
+        public void run() {
+            vibrator.vibrate(pattern , -1);
+            handler.postDelayed(this, 2000);
+        }
+    };
 
     @SuppressWarnings("deprecation")
     private ViewTreeObserver.OnGlobalLayoutListener layoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -102,7 +119,7 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
             mp.stop();
             textIncomeCall.post(updateTimeOfCall);
         }
-
+        handler.removeCallbacks(viberation);
         imageCall.setVisibility(View.GONE);
         RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) imageEnd.getLayoutParams();
         params.addRule(RelativeLayout.CENTER_HORIZONTAL);
@@ -140,6 +157,7 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
         } catch (IllegalStateException e){
             e.printStackTrace();
         }
+        handler.removeCallbacks(viberation);
         mp.release();
         containerContactTexts.setBackgroundColor(getResources().getColor(R.color.red));
         textIncomeCall.setText(getString(R.string.end_call));
@@ -203,7 +221,8 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
                     }
                     break;
                 case MotionEvent.ACTION_UP:
-                    finalizeGesture(v);
+                    if (!triggerAnswer)
+                        finalizeGesture(v);
                     break;
                 case MotionEvent.ACTION_CANCEL:
                     finalizeGesture(v);

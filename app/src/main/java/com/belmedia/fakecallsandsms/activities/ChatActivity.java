@@ -93,7 +93,7 @@ public class ChatActivity extends ActionBarActivity {
         messagesContainer.setHasFixedSize(true);
         messagesContainer.setLayoutManager(new LinearLayoutManager(this));
         messagesContainer.setAdapter(adapter);
-
+        messagesContainer.scrollToPosition(adapter.getItemCount() - 1);
     }
 
 

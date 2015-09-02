@@ -11,11 +11,13 @@ import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.provider.ContactsContract;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.widget.EditText;
@@ -302,12 +304,9 @@ public class Utils {
                         SharedPreferences.Editor edit = PreferenceManager.getDefaultSharedPreferences(app).edit();
                         int count = 0;
                         String number = "0";
-                        Log.d("TAG", "save");
                         for (ChatMessage chatMessage : list){
                             if (count == 0)
                                 number = chatMessage.getSenderNumber();
-                            Log.d("TAG", Boolean.toString(chatMessage.getIsme()));
-                            Log.d("TAG", chatMessage.getMessage());
                             Gson gson = new GsonBuilder().create();
                             String array = gson.toJson(chatMessage);
                             edit.putString(number + Integer.toString(count), array);
@@ -330,17 +329,31 @@ public class Utils {
         int size = pref.getInt(number + "size", 0);
         if (size == 0)
             return;
-        Log.d("TAG", "load");
         for (int i = 0 ; i < size; i++) {
             Gson gson = new Gson();
             Type type = new TypeToken<ChatMessage>() {}.getType();
             String array = pref.getString(number + Integer.toString(i), "null");
             ChatMessage message = gson.fromJson(array, type);
-            Log.d("TAG", Boolean.toString(message.getIsme()));
-            Log.d("TAG", message.getMessage());
             chatHistory.add(message);
         }
     }
+
+    public static boolean checkVibreationIsOn(Context context){
+        boolean status = false;
+        AudioManager am = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        if(am.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE){
+            status = true;
+        } else if (1 == Settings.System.getInt(context.getContentResolver(), "vibrate_when_ringing", 0)) //vibrate on
+            status = true;
+        return status;
+    }
+
+    public static boolean checkRingerIsOn(Context context){
+        AudioManager am = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
+        return am.getRingerMode() == AudioManager.RINGER_MODE_NORMAL;
+    }
+
+
 
     public static String getLastDate(ArrayList<ChatMessage> chatHistory) {
         String date;
