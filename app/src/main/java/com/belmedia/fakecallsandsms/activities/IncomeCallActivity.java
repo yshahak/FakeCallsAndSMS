@@ -67,7 +67,7 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
             mp.setLooping(true);
             mp.start();
         }
-        if (Utils.checkVibreationIsOn(this)) //vibrate on
+        if (Utils.checkVibrationIsOn(this)) //vibrate on
             handler.post(viberation);
         IconListener iconListener = new IconListener();
         imageCall.setOnTouchListener(iconListener);

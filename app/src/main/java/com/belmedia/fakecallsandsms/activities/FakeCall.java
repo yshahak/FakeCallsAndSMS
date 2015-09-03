@@ -273,7 +273,7 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
         if (!contactNumber.equals(""))
             incomeCallActivity.putExtra(KEY_CONTACT_NUMBER, contactNumber);
 
-        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, incomeCallActivity, 0);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, incomeCallActivity, PendingIntent.FLAG_UPDATE_CURRENT);
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
         alarmManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis() + timeForTrigger, pendingIntent);
 
@@ -286,40 +286,35 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
 
 
     public void startVoiceDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Choose source of voice")
-                .setPositiveButton("Clear", new DialogInterface.OnClickListener() {
+        CharSequence[] items =  {"Record new voice", "Select from library", "Clear"};
+        new AlertDialog.Builder(this)
+                .setTitle("Choose source of voice")
+                .setItems(items, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        selectedMusicUri = null;
-                        pref.edit().putString(KEY_MUSIC_URI, "").apply();
-                        removeMusicFromUri();
-                    }
-                })
-                .setNegativeButton("Select from library", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
+                        switch (which) {
+                            case 2:
+                                selectedMusicUri = null;
+                                pref.edit().putString(KEY_MUSIC_URI, "").apply();
+                                removeMusicFromUri();
+                                break;
+                            case 1:
                                 Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
                                 startActivityForResult(i, SELECT_MUSIC);
-                            }
-                        }
-
-                ).setNeutralButton("Record new voice", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
-                        try {
-                            startActivityForResult(intent, SELECT_RECORD_SOUND);
-                        } catch (ActivityNotFoundException e) {
-                            ExceptionHandler.handleException(e);
-                            Toast.makeText(getBaseContext(), "Your device miss built in recorder", Toast.LENGTH_LONG).show();
+                                break;
+                            case 0:
+                                Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
+                                try {
+                                    startActivityForResult(intent, SELECT_RECORD_SOUND);
+                                } catch (ActivityNotFoundException e) {
+                                    ExceptionHandler.handleException(e);
+                                    Toast.makeText(getBaseContext(), "Your device miss built in recorder", Toast.LENGTH_LONG).show();
+                                }
+                                break;
                         }
                     }
-                }
+                }).create().show();
 
-        )
-                .create()
-                .show();
     }
 
 

@@ -338,7 +338,7 @@ public class Utils {
         }
     }
 
-    public static boolean checkVibreationIsOn(Context context){
+    public static boolean checkVibrationIsOn(Context context){
         boolean status = false;
         AudioManager am = (AudioManager)context.getSystemService(Context.AUDIO_SERVICE);
         if(am.getRingerMode() == AudioManager.RINGER_MODE_VIBRATE){
