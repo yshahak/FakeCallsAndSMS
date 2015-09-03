@@ -54,10 +54,6 @@
             android:label="@string/title_activity_fake_sms"
             android:windowSoftInputMode="adjustPan" >
         </activity>
-        <activity
-            android:name=".activities.PickCelebActivity"
-            android:label="@string/title_activity_pick_celeb" >
-        </activity>
 
         <receiver android:name=".sms.SmsReceiver"/>
 

@@ -9,13 +9,13 @@
 
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_weight="3"
         android:layout_gravity="center_horizontal"
         android:orientation="horizontal"   >
 
-
+<!--
         <ImageView
             android:id="@+id/button_add_celeb"
             android:layout_width="wrap_content"
@@ -23,19 +23,16 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:src="@drawable/call_pick_celeb_btn"
-            android:gravity="center" />
+            android:gravity="center" />-->
 
 
         <ImageView
             android:id="@+id/button_add_contact"
             android:layout_width="wrap_content"
-            android:layout_weight="1"
 
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:src="@drawable/call_pick_contact_btn"
-
-            android:gravity="center"     />
+            android:src="@drawable/call_pick_contact_btn" />
 
 
     </LinearLayout>

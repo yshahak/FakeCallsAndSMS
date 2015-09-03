@@ -43,7 +43,7 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
     //final int  btnDpWidth = 100, btnDpwHeight = 100;
 
     private static final int SELECT_PICTURE = 1, CROP_PIC_REQUEST_CODE = 2,
-            SELECT_MUSIC = 3, SELECT_RECORD_SOUND = 4, SELECT_CONTACT = 5, SELECT_CELEB = 6;
+            SELECT_MUSIC = 3, SELECT_RECORD_SOUND = 4, SELECT_CONTACT = 5; /*SELECT_CELEB = 6*/;
     public static final String KEY_IMAGE_URI = "imageUriCall", KEY_MUSIC_URI = "musicUriCall"
             , KEY_CONTACT_NAME = "contactNameCall", KEY_CONTACT_NUMBER = "contactNumberCall"
             , KEY_CUSTOM = "extraCustomCall", KEY_LAST_TIME_CHOICE = "last_time_choice";
@@ -80,7 +80,7 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
 
         btnAddVoice.setOnClickListener(this);
         btnAddPhoto.setOnClickListener(this);
-        findViewById(R.id.button_add_celeb).setOnClickListener(this);
+        //findViewById(R.id.button_add_celeb).setOnClickListener(this);
         findViewById(R.id.button_add_contact).setOnClickListener(this);
 
         pref = PreferenceManager.getDefaultSharedPreferences(this);
@@ -208,7 +208,7 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
                         }
                     }
                     break;
-                case SELECT_CELEB:
+               /* case SELECT_CELEB:
                     int drawAble_id = data.getIntExtra(PickCelebActivity.KEY_CELEB_RESULT, R.drawable.celebs_obama);
                     String packageName = getPackageName();
                     selectedImageUri = Uri.parse("android.resource://" + packageName + "/" + drawAble_id);
@@ -231,7 +231,7 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
                             editTextCallerNumber.setText("0000");
                             break;
                     }
-                    break;
+                    break;*/
 
             }
         }
@@ -334,8 +334,8 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
             Utils.pickImage(this, SELECT_PICTURE);
         else if (v.equals(btnAddVoice))
             startVoiceDialog();
-        else if (v.getId() == R.id.button_add_celeb)
-            pickFromCeleb();
+       /* else if (v.getId() == R.id.button_add_celeb)
+            pickFromCeleb();*/
         else if (v.getId() == R.id.button_add_contact)
             pickFromContact();
 
@@ -350,8 +350,8 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
     }
 
 
-    public void pickFromCeleb() {
+   /* public void pickFromCeleb() {
         Intent pickContactIntent = new Intent(this, PickCelebActivity.class);
         startActivityForResult(pickContactIntent, SELECT_CELEB);
-    }
+    }*/
 }
