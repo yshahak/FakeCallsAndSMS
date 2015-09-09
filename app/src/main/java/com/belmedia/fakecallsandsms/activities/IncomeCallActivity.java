@@ -26,8 +26,6 @@ import android.widget.TextView;
 import com.belmedia.fakecallsandsms.R;
 import com.belmedia.fakecallsandsms.Utils;
 
-import java.io.IOException;
-
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -63,7 +61,7 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
 
         mp = MediaPlayer.create(this, Settings.System.DEFAULT_RINGTONE_URI);
-        if (((AudioManager)getSystemService(Context.AUDIO_SERVICE)).getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
+        if (mp != null && ((AudioManager)getSystemService(Context.AUDIO_SERVICE)).getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
             mp.setLooping(true);
             mp.start();
         }
@@ -115,7 +113,7 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
     }
 
     public void answerCall() {
-        if (mp.isPlaying()) {
+        if (mp != null && mp.isPlaying()) {
             mp.stop();
             textIncomeCall.post(updateTimeOfCall);
         }
@@ -140,7 +138,7 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
                 audio.setStreamVolume(AudioManager.STREAM_MUSIC, 4, AudioManager.FLAG_ALLOW_RINGER_MODES);
                 mp.setLooping(true);
                 mp.start();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
 

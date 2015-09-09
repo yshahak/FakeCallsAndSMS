@@ -205,7 +205,12 @@ public class Utils {
                     timeForTrigger = 20 * SecFactor;
                 else {
                     boolean spinnerIsInSeconds = (spinnerCustom.getSelectedItemPosition() == 0);
-                    int value = Integer.valueOf(customTime);
+                    int value;
+                    try{
+                        value = Integer.valueOf(customTime);
+                    } catch (NumberFormatException e){
+                        value = 10;
+                    }
                     if (spinnerIsInSeconds)
                         timeForTrigger = value * SecFactor;
                     else
@@ -228,8 +233,12 @@ public class Utils {
         // Get the URI that points to the selected contact
         // We only need the NUMBER column, because there will be only one row in the result
         Bundle bundle = new Bundle();
-        String[] projection = {ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                ContactsContract.CommonDataKinds.Phone.PHOTO_URI};
+        String[] projection;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB)
+            projection  = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
+                    ContactsContract.CommonDataKinds.Phone.PHOTO_URI};
+        else
+            projection  = new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER, ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME};
 
         // Perform the query on the contact to get the NUMBER column
         // We don't need a selection or sort order (there's only one result for the given URI)
@@ -238,28 +247,29 @@ public class Utils {
         // Consider using CursorLoader to perform the query.
         Cursor cursor = context.getContentResolver()
                 .query(selectedContactUri, projection, null, null, null);
-        cursor.moveToFirst();
+        if (cursor != null && cursor.moveToFirst()) {
 
-        // Retrieve the phone number from the NUMBER column
-        int columnNumber = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-        String number = cursor.getString(columnNumber);
-        //number = number.replaceAll("[^0-9]+", "");
-        number = number.replaceAll("\\D+", "");
+            // Retrieve the phone number from the NUMBER column
+            int columnNumber = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+            String number = cursor.getString(columnNumber);
+            //number = number.replaceAll("[^0-9]+", "");
+            number = number.replaceAll("\\D+", "");
 
-        bundle.putString(KEY_NUMBER, number);
-        int columnName = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
-        String thumbnail = "";
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            int columnThumbnailUri = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI);
-            thumbnail = cursor.getString(columnThumbnailUri);
-            if (thumbnail == null)
-                thumbnail = "android.resource://" + context.getPackageName() +"/" + String.valueOf(R.drawable.celebs_unknown);
-        } else {
-            thumbnail = "android.resource://" + context.getPackageName() +"/" + String.valueOf(R.drawable.celebs_unknown);
+            bundle.putString(KEY_NUMBER, number);
+            int columnName = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME);
+            String thumbnail = "";
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                int columnThumbnailUri = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.PHOTO_URI);
+                thumbnail = cursor.getString(columnThumbnailUri);
+                if (thumbnail == null)
+                    thumbnail = "android.resource://" + context.getPackageName() + "/" + String.valueOf(R.drawable.celebs_unknown);
+            } else {
+                thumbnail = "android.resource://" + context.getPackageName() + "/" + String.valueOf(R.drawable.celebs_unknown);
+            }
+            bundle.putString(KEY_THUMBNAIL, thumbnail);
+            bundle.putString(KEY_NAME, cursor.getString(columnName));
+            cursor.close();
         }
-        bundle.putString(KEY_THUMBNAIL, thumbnail);
-        bundle.putString(KEY_NAME, cursor.getString(columnName));
-        cursor.close();
         return bundle;
     }
 

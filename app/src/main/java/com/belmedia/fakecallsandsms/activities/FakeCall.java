@@ -18,7 +18,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -168,12 +167,15 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
 
     @SuppressWarnings("deprecation")
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
+        if (resultCode == RESULT_OK && data != null) {
             switch (requestCode) {
                 case SELECT_PICTURE:
                     selectedImageUri = data.getData();
                     if (selectedImageUri != null) {
-                        Utils.loadImageFromUri(getBaseContext(), selectedImageUri, photoHolder);
+                        if (photoHolder.getWidth() == 0)
+                            photoHolder.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
+                        else
+                            Utils.loadImageFromUri(getBaseContext(), selectedImageUri, photoHolder);
                     } else
                         System.out.println("selectedImagePath is null");
                     break;
@@ -202,7 +204,10 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
                         String thumbnail = bundle.getString(Utils.KEY_THUMBNAIL);
                         if (thumbnail != null) {
                             selectedImageUri = Uri.parse(thumbnail);
-                            Utils.loadImageFromUri(getBaseContext(), selectedImageUri, photoHolder);
+                            if (photoHolder.getWidth() == 0)
+                                photoHolder.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
+                            else
+                                Utils.loadImageFromUri(getBaseContext(), selectedImageUri, photoHolder);
                         } else {
                             selectedImageUri = null;
                         }
@@ -323,9 +328,10 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
         CursorLoader loader = new CursorLoader(context, contentUri, projection, null, null, null);
         Cursor cursor = loader.loadInBackground();
         int songTitle_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
-        cursor.moveToFirst();
-        Log.d("TAG", cursor.getString(songTitle_index));
-        return cursor.getString(songTitle_index);
+        if (cursor.moveToFirst())
+            return cursor.getString(songTitle_index);
+        else
+            return "record";
     }
 
     @Override
@@ -345,7 +351,11 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
     public void pickFromContact() {
         Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
         pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE); // Show user only contacts w/ phone numbers
-        startActivityForResult(pickContactIntent, SELECT_CONTACT);
+        try {
+            startActivityForResult(pickContactIntent, SELECT_CONTACT);
+        } catch (ActivityNotFoundException e){
+            Toast.makeText(this, "No contact app to handle this", Toast.LENGTH_LONG).show();
+        }
 
     }
 
