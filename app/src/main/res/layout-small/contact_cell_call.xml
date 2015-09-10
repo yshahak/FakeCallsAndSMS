@@ -9,10 +9,10 @@
 
     <ImageView
         android:id="@+id/button_add_contact"
-        android:layout_width="50dp"
+        android:layout_width="80dp"
         android:layout_height="50dp"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/call_pick_contact_btn"        />
+        android:src="@drawable/call_pick_contact_btn"  />
 
 
 
