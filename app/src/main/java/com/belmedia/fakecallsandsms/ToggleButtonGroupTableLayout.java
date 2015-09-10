@@ -3,9 +3,12 @@ package com.belmedia.fakecallsandsms;
 import android.content.Context;
 import android.util.AttributeSet;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.RadioButton;
 import android.widget.TableLayout;
 import android.widget.TableRow;
+
+import com.crashlytics.android.Crashlytics;
 
 /**
  * Created by B.E.L on 07/07/2015.
@@ -82,6 +85,10 @@ public class ToggleButtonGroupTableLayout extends TableLayout implements View.On
     }
 
     public void setCheckedRadioButtonId(int id) {
-        findViewById(id).performClick();
+        try {
+            findViewById(id).performClick();
+        } catch (WindowManager.BadTokenException e){
+            Crashlytics.logException(e);
+        }
     }
 }

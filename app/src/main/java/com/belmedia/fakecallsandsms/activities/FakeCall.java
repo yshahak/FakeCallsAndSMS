@@ -89,9 +89,10 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
         String savedImageUri = pref.getString(KEY_IMAGE_URI, "");
         if (!"".equals(savedImageUri)) {
             selectedImageUri = Uri.parse(savedImageUri);
-            photoHolder.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
+            photoHolder.getViewTreeObserver().addOnGlobalLayoutListener(layoutListenerInageHolder);
         }
-        radioGroupTimePicker.setCheckedRadioButtonId(pref.getInt(KEY_LAST_TIME_CHOICE, R.id.radioButton5sec));
+        radioGroupTimePicker.getViewTreeObserver().addOnGlobalLayoutListener(layoutListenerSpinner);
+
         String savedMusicUri = pref.getString(KEY_MUSIC_URI, "");
         if (!"".equals(savedMusicUri)) {
             selectedMusicUri = Uri.parse(savedMusicUri);
@@ -115,11 +116,19 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
 
     }
 
-    private ViewTreeObserver.OnGlobalLayoutListener layoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+    private ViewTreeObserver.OnGlobalLayoutListener layoutListenerInageHolder = new ViewTreeObserver.OnGlobalLayoutListener() {
         @Override
         public void onGlobalLayout() {
             Utils.loadImageFromUri(FakeCall.this, selectedImageUri, photoHolder);
             photoHolder.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+        }
+    };
+
+    private ViewTreeObserver.OnGlobalLayoutListener layoutListenerSpinner = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            radioGroupTimePicker.setCheckedRadioButtonId(pref.getInt(KEY_LAST_TIME_CHOICE, R.id.radioButton5sec));
+            radioGroupTimePicker.getViewTreeObserver().removeGlobalOnLayoutListener(this);
         }
     };
 
@@ -173,7 +182,7 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
                     selectedImageUri = data.getData();
                     if (selectedImageUri != null) {
                         if (photoHolder.getWidth() == 0)
-                            photoHolder.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
+                            photoHolder.getViewTreeObserver().addOnGlobalLayoutListener(layoutListenerInageHolder);
                         else
                             Utils.loadImageFromUri(getBaseContext(), selectedImageUri, photoHolder);
                     } else
@@ -205,7 +214,7 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
                         if (thumbnail != null) {
                             selectedImageUri = Uri.parse(thumbnail);
                             if (photoHolder.getWidth() == 0)
-                                photoHolder.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
+                                photoHolder.getViewTreeObserver().addOnGlobalLayoutListener(layoutListenerInageHolder);
                             else
                                 Utils.loadImageFromUri(getBaseContext(), selectedImageUri, photoHolder);
                         } else {

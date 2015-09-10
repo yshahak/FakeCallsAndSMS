@@ -55,7 +55,7 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
     @Bind(R.id.spinner_custom)
     Spinner spinnerCustom;
     ContactData contactData;
-    public static String defaultSmsApp;
+    private SharedPreferences pref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,13 +65,12 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
         btnAddContact.setOnClickListener(this);
         contactData = new ContactData();
 
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        pref = PreferenceManager.getDefaultSharedPreferences(this);
         contactData.name = pref.getString(KEY_CONTACT_NAME, "");
         contactData.number = pref.getString(KEY_CONTACT_NUMBER, "");
         contactData.thumbnailUri = pref.getString(KEY_CONTACT_THUMBNAIL, "android.resource://" + getPackageName() + "/" + String.valueOf(R.drawable.celebs_unknown));
-        radioGroupTimePicker.setCheckedRadioButtonId(pref.getInt(KEY_LAST_TIME_CHOICE, R.id.radioButton5sec));
         btnAddContact.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
-
+        radioGroupTimePicker.getViewTreeObserver().addOnGlobalLayoutListener(layoutListenerSpinner);
 
         editTextCallerName.setText(contactData.name);
         if (!contactData.number.equals(""))
@@ -101,6 +100,14 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
         public void onGlobalLayout() {
             Utils.loadImageFromUri(FakeSMS.this, Uri.parse(contactData.thumbnailUri), btnAddContact);
             btnAddContact.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+        }
+    };
+
+    private ViewTreeObserver.OnGlobalLayoutListener layoutListenerSpinner = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            radioGroupTimePicker.setCheckedRadioButtonId(pref.getInt(KEY_LAST_TIME_CHOICE, R.id.radioButton5sec));
+            radioGroupTimePicker.getViewTreeObserver().removeGlobalOnLayoutListener(this);
         }
     };
 
