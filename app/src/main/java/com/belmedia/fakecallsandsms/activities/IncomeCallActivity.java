@@ -23,8 +23,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.belmedia.fakecallsandsms.ExceptionHandler;
 import com.belmedia.fakecallsandsms.R;
 import com.belmedia.fakecallsandsms.Utils;
+import com.crashlytics.android.Crashlytics;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -59,8 +61,11 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
         ButterKnife.bind(this);
         handler = new Handler();
         vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
-
-        mp = MediaPlayer.create(this, Settings.System.DEFAULT_RINGTONE_URI);
+        try {
+            mp = MediaPlayer.create(this, Settings.System.DEFAULT_RINGTONE_URI);
+        }catch (IllegalStateException e){
+            ExceptionHandler.handleException(e);
+        }
         if (mp != null && ((AudioManager)getSystemService(Context.AUDIO_SERVICE)).getRingerMode() == AudioManager.RINGER_MODE_NORMAL){
             mp.setLooping(true);
             mp.start();
@@ -130,33 +135,35 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
         Uri musicUri = getIntent().getParcelableExtra(FakeCall.KEY_MUSIC_URI);
         if (musicUri != null){
             String pathFromUri = getRealPathFromURI(this, musicUri);
-            mp = new MediaPlayer();
-            try {
-                mp.setDataSource(this, Uri.parse(pathFromUri));
-                mp.prepare();
-                AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
-                audio.setStreamVolume(AudioManager.STREAM_MUSIC, 4, AudioManager.FLAG_ALLOW_RINGER_MODES);
-                mp.setLooping(true);
-                mp.start();
-            } catch (Exception e) {
-                e.printStackTrace();
+            if (pathFromUri != null) {
+                mp = new MediaPlayer();
+                try {
+                    mp.setDataSource(this, Uri.parse(pathFromUri));
+                    mp.prepare();
+                    AudioManager audio = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+                    audio.setStreamVolume(AudioManager.STREAM_MUSIC, 4, AudioManager.FLAG_ALLOW_RINGER_MODES);
+                    mp.setLooping(true);
+                    mp.start();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
         }
-        Log.d("TAG", "once");
     }
 
 
     @SuppressWarnings("deprecation")
     public void endCall(int delayToFinish) {
         try {
-            if (mp.isPlaying())
+            if (mp != null && mp.isPlaying()) {
                 mp.stop();
+                mp.release();
+            }
         } catch (IllegalStateException e){
-            e.printStackTrace();
+            Crashlytics.logException(e);
         }
         handler.removeCallbacks(viberation);
-        mp.release();
         containerContactTexts.setBackgroundColor(getResources().getColor(R.color.red));
         textIncomeCall.setText(getString(R.string.end_call));
         textIncomeCall.postDelayed(finish, delayToFinish);
@@ -259,8 +266,10 @@ public class IncomeCallActivity extends AppCompatActivity implements View.OnClic
         CursorLoader loader = new CursorLoader(context, contentUri, projection, null, null, null);
         Cursor cursor = loader.loadInBackground();
         int songPath_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA);
-        cursor.moveToFirst();
-        return cursor.getString(songPath_index);
+        if (cursor.moveToFirst())
+            return cursor.getString(songPath_index);
+        else
+            return null;
     }
 
 

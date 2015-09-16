@@ -1,5 +1,7 @@
 package com.belmedia.fakecallsandsms;
 
+import com.crashlytics.android.Crashlytics;
+
 /**
  * Created by B.E.L on 12/01/2015.
  */
@@ -9,8 +11,7 @@ public class ExceptionHandler {
     public static void handleException(Exception e) {
         if (enableReporting) {
             try {
-                //Mint.logException(e);
-                //Crittercism.logHandledException(e);
+                Crashlytics.logException(e);
             } catch (Exception ex) {
             } finally {
                 e.printStackTrace();

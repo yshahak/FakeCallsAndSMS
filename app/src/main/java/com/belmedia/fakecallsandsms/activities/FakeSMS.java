@@ -164,7 +164,10 @@ public class FakeSMS extends AppCompatActivity implements View.OnClickListener {
                         editTextCallerName.setText(contactData.name);
                         editTextCallerNumber.setText(contactData.number);
                         if (contactData.thumbnailUri != null && !contactData.thumbnailUri.equals(""))
-                            Utils.loadImageFromUri(getBaseContext(), Uri.parse(contactData.thumbnailUri), btnAddContact);
+                            if (btnAddContact.getWidth() == 0)
+                                btnAddContact.getViewTreeObserver().addOnGlobalLayoutListener(layoutListener);
+                            else
+                                Utils.loadImageFromUri(getBaseContext(), Uri.parse(contactData.thumbnailUri), btnAddContact);
                         else {
                             btnAddContact.setImageResource(R.drawable.celebs_unknown);
                             btnAddContact.setBackgroundColor(getResources().getColor(R.color.gray));

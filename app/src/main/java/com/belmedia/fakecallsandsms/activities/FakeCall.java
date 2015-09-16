@@ -314,7 +314,12 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
                                 break;
                             case 1:
                                 Intent i = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI);
-                                startActivityForResult(i, SELECT_MUSIC);
+                                try {
+                                    startActivityForResult(i, SELECT_MUSIC);
+                                } catch (ActivityNotFoundException e) {
+                                    ExceptionHandler.handleException(e);
+                                    Toast.makeText(getBaseContext(), "Your device miss built in app for select music", Toast.LENGTH_LONG).show();
+                                }
                                 break;
                             case 0:
                                 Intent intent = new Intent(MediaStore.Audio.Media.RECORD_SOUND_ACTION);
@@ -336,6 +341,8 @@ public class FakeCall extends AppCompatActivity implements View.OnClickListener 
         String[] projection = {MediaStore.Audio.Media.TITLE};
         CursorLoader loader = new CursorLoader(context, contentUri, projection, null, null, null);
         Cursor cursor = loader.loadInBackground();
+        if (cursor == null)
+            return "record";
         int songTitle_index = cursor.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE);
         if (cursor.moveToFirst())
             return cursor.getString(songTitle_index);

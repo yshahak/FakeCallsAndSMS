@@ -2,6 +2,7 @@ package com.belmedia.fakecallsandsms;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -23,6 +24,7 @@ import android.util.Log;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.belmedia.fakecallsandsms.sms.ChatMessage;
 import com.google.gson.Gson;
@@ -226,7 +228,12 @@ public class Utils {
     public static void pickContact(Activity activity, int selectContact) {
         Intent pickContactIntent = new Intent(Intent.ACTION_PICK, Uri.parse("content://contacts"));
         pickContactIntent.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE); // Show user only contacts w/ phone numbers
-        activity.startActivityForResult(pickContactIntent, selectContact);
+        try {
+            activity.startActivityForResult(pickContactIntent, selectContact);
+        }catch (ActivityNotFoundException e){
+            ExceptionHandler.handleException(e);
+            Toast.makeText(activity, "No Contact App to handle this", Toast.LENGTH_LONG).show();
+        }
     }
 
     public static Bundle loadContactFromUri(@NonNull Context context, Uri selectedContactUri) {
